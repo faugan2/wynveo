@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { GAME_LABEL, GAME_ICON, BET_RESULT, betResult, formatAmount, formatSigned } from '@wynveo/core';
 import { Card, EmptyState, Pill, SectionTitle, SegmentedControl, Skeleton } from '../../ui/index.js';
 import { BallRow } from '../../ui/games/index.jsx';
+import { SportTicket } from './SportTicket.jsx';
 import { useMyBets } from '../../hooks/useMyBets.js';
 import { ROUTES } from '../../app/routes.js';
 
@@ -42,7 +43,8 @@ function detail(b) {
 }
 
 export function BetsPage() {
-  const [product, setProduct] = useState('games');
+  const location = useLocation();
+  const [product, setProduct] = useState(location.state?.product ?? 'games');
   const { items, loading, summary } = useMyBets({ product });
   return (
     <>
@@ -51,7 +53,23 @@ export function BetsPage() {
         options={[{ value: 'games', label: '🎰 Jeux' }, { value: 'sport', label: '⚽ Sport' }]} />
 
       {product === 'sport' ? (
-        <Card><EmptyState icon="sport" title="Le sport arrive bientôt">Vos tickets sportifs apparaîtront ici.</EmptyState></Card>
+        <>
+          <Card style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', textAlign: 'center', padding: '10px 6px' }}>
+            <div><div style={{ fontSize: '0.72rem', color: 'var(--fg-dim)' }}>Misé</div><b>{formatAmount(summary.staked)}</b></div>
+            <div><div style={{ fontSize: '0.72rem', color: 'var(--fg-dim)' }}>En attente</div><b>{summary.pending}</b></div>
+            <div><div style={{ fontSize: '0.72rem', color: 'var(--fg-dim)' }}>Bilan</div><b style={{ color: summary.net >= 0 ? 'var(--green-text)' : 'var(--red-text)' }}>{formatSigned(summary.net + summary.pendingStake)}</b></div>
+          </Card>
+          {loading && <Card style={{ display: 'grid', gap: 10 }}><Skeleton height={64} /><Skeleton height={64} /></Card>}
+          {!loading && items.length === 0 && (
+            <Card><EmptyState icon="sport" title="Pas encore de ticket">Choisissez vos matchs dans <Link to={ROUTES.sport}>Sport</Link>.</EmptyState></Card>
+          )}
+          {groupByDay(items).map((g) => (
+            <section key={g.label} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <SectionTitle>{g.label}</SectionTitle>
+              {g.items.map((b) => <SportTicket key={b.id} bet={b} />)}
+            </section>
+          ))}
+        </>
       ) : (
         <>
           <Card style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', textAlign: 'center', padding: '10px 6px' }}>

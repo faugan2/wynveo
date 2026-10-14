@@ -11,3 +11,4 @@ export * from './auth.js';
 export * from './wallet.js';
 export * from './random.js';
 export * from './games/index.js';
+export * from './sport/index.js';

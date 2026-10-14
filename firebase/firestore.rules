@@ -43,6 +43,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Matchs et cotes : publics pour les joueurs connectés ; modifiés uniquement par les Cloud Functions.
+    match /sportEvents/{eventId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     match /adminLogs/{id} {
       allow read: if role() == 'super';
       allow write: if false;

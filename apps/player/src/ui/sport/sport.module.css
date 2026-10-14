@@ -1,0 +1,101 @@
+/* ---------- Cotes ---------- */
+.odds {
+  min-width: 0; min-height: 46px; padding: 5px 6px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--panel-2); color: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  font: inherit; cursor: pointer; transition: background .12s, border-color .12s, transform .08s;
+}
+.odds:hover:not(:disabled) { border-color: var(--blue); background: #222064; }
+.odds:active:not(:disabled) { transform: scale(.97); }
+.odds:disabled { cursor: not-allowed; opacity: .55; }
+.odds:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.oddsOn, .oddsOn:hover:not(:disabled) { background: linear-gradient(180deg, var(--blue), var(--blue-2)); border-color: #7fb0ff; }
+.oddsWide { flex-direction: row; justify-content: space-between; padding: 10px 14px; }
+.oddsLabel { font-size: .72rem; color: var(--fg-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.oddsOn .oddsLabel { color: #e6efff; }
+.oddsValue { font-size: 1rem; font-variant-numeric: tabular-nums; }
+
+/* ---------- Chips ---------- */
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--fg-muted); font: inherit; font-weight: 600; cursor: pointer;
+}
+.chipOn { background: var(--blue); border-color: var(--blue); color: #fff; }
+.chipCount { font-size: .72rem; background: #0005; border-radius: 999px; padding: 1px 7px; }
+
+/* ---------- Compétition et matchs ---------- */
+.league { background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--radius-m); overflow: hidden; }
+.leagueTitle {
+  margin: 0; padding: 10px 14px; font-size: .82rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase;
+  color: var(--fg-muted); background: var(--bg-elev); display: flex; gap: 8px; align-items: center;
+}
+.leagueBody > * + * { border-top: 1px solid var(--line-soft); }
+
+.event { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 250px); gap: 10px; align-items: center; padding: 10px 14px; }
+.eventMain {
+  min-width: 0; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: center;
+  background: none; border: 0; color: inherit; font: inherit; text-align: left; padding: 0; cursor: pointer;
+}
+.eventMain:hover .teams { color: #fff; }
+.eventTime { font-size: .8rem; color: var(--fg-dim); font-variant-numeric: tabular-nums; }
+.teams { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-weight: 600; color: #e9e6ff; }
+.teams > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.more { font-size: .74rem; color: var(--blue-text); white-space: nowrap; }
+.eventOdds { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; }
+
+@media (max-width: 560px) {
+  .event { grid-template-columns: 1fr; gap: 8px; }
+  .eventMain { grid-template-columns: 44px minmax(0, 1fr) auto; }
+}
+
+/* ---------- Direct ---------- */
+.live { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+.liveMain { flex: 1; min-width: 0; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: center; background: none; border: 0; color: inherit; font: inherit; text-align: left; padding: 0; cursor: pointer; }
+.liveDot { font-size: .7rem; font-weight: 700; text-transform: uppercase; color: var(--red-text); display: inline-flex; align-items: center; gap: 5px; }
+.liveDot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: pulse 1.2s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+.liveTeams { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-weight: 600; }
+.liveTeams > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.liveScore { display: flex; flex-direction: column; gap: 2px; text-align: right; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+/* ---------- Coupon ---------- */
+.sel { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); list-style: none; }
+.selClosed { opacity: .6; }
+.selText { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; font-size: .78rem; color: var(--fg-muted); }
+.selText b { font-size: .92rem; color: #fff; }
+.selEvent { color: var(--fg-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.selWarn { color: var(--red-text); font-weight: 700; }
+.selRight { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-variant-numeric: tabular-nums; }
+.selRemove { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--line); background: none; color: var(--fg-dim); cursor: pointer; font-size: .75rem; }
+.selRemove:hover { color: #fff; border-color: var(--red); }
+.prev { color: var(--fg-dim); font-weight: 400; margin-right: 6px; font-size: .8rem; }
+.up { color: var(--green-text); }
+.down { color: var(--red-text); }
+
+.totals { margin: 0; display: grid; gap: 6px; font-size: .86rem; }
+.totals > div { display: flex; justify-content: space-between; gap: 10px; color: var(--fg-muted); }
+.totals dd { margin: 0; color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+.totalStrong dd { color: var(--gold); font-size: 1.1rem; font-weight: 800; }
+
+.stake { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+.stakeField {
+  display: flex; align-items: center; gap: 10px; padding: 0 12px; height: 48px; border-radius: var(--radius-s);
+  background: var(--field); border: 1px solid var(--line); font-size: .82rem; color: var(--fg-dim);
+}
+.stakeField:focus-within { border-color: var(--focus); }
+.stakeField input { flex: 1; min-width: 0; width: 100%; background: none; border: 0; color: #fff; font: inherit; font-size: 1.15rem; font-weight: 700; text-align: right; outline: none; }
+.cur { font-weight: 700; }
+.quick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.quick button { padding: 7px 0; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); color: var(--fg-muted); font: inherit; font-size: .8rem; font-weight: 600; cursor: pointer; }
+.quick .quickOn { border-color: var(--blue); color: #fff; }
+
+.slipBar {
+  position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 40;
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; border: 0;
+  background: linear-gradient(180deg, var(--blue), var(--blue-2)); color: #fff; font: inherit; font-weight: 700;
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.slipBar > :nth-child(2) { flex: 1; text-align: left; }
+.slipCount { min-width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #1b1300; display: grid; place-items: center; font-size: .85rem; }

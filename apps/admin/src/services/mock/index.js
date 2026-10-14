@@ -59,3 +59,4 @@ export const withdrawalAdminService = {
     return { status: t.status };
   },
 };
+export { sportAdminService } from './sport.js';

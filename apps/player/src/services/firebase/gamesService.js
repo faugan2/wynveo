@@ -12,6 +12,9 @@ export function mapBet(doc) {
     win: d.win ?? 0, reference: d.reference, outcome: d.outcome ?? null, numbers: d.numbers ?? null,
     drawId: d.drawId ?? null, drawAt: toDate(d.drawAt), tickets: d.tickets ?? null, roundId: d.roundId ?? null,
     createdAt: toDate(d.createdAt) ?? new Date(), settledAt: toDate(d.settledAt),
+    // Paris sportifs
+    type: d.type ?? null, totalOdds: d.totalOdds ?? null, potentialWin: d.potentialWin ?? null, finalOdds: d.finalOdds ?? null,
+    selections: (d.selections ?? null)?.map((x) => ({ ...x, startAt: toDate(x.startAt) })) ?? null,
   };
 }
 

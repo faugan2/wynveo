@@ -11,3 +11,4 @@ export * from './src/api/admin.js';
 export * from './src/api/webhooks.js';
 export * from './src/api/games.js';
 export * from './src/api/schedules.js';
+export * from './src/api/sport.js';

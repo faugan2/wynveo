@@ -38,6 +38,7 @@ const uid = () => {
 
 export const dataSource = 'mock';
 export { gamesService } from './games.js';
+export { sportService } from './sport.js';
 
 /** Empreinte simple : suffisant pour une démo locale, jamais utilisé en production. */
 const fingerprint = (pw) => Array.from(pw).reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7).toString(36);

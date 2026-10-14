@@ -47,14 +47,16 @@ export function createFakeFirestore() {
       return {
         doc: (id) => docRef(col, id ?? `auto${++autoId}`),
         where(field, op, value) {
-          const filters = [[field, value]];
+          const filters = [[field, op, value]];
+          const match = (d, [f, o, v]) => (o === 'array-contains' ? (d[f] ?? []).includes(v) : o === 'in' ? v.includes(d[f]) : d[f] === v);
           const q = {
-            where(f, o, v) { filters.push([f, v]); return q; },
+            where(f, o, v) { filters.push([f, o, v]); return q; },
+            orderBy() { return q; },
             limit() { return q; },
             async get() {
-              const docs = [...store.keys()].filter((p) => p.startsWith(`${col}/`))
+              const docs = [...store.keys()].filter((p) => p.startsWith(`${col}/`) && !p.slice(col.length + 1).includes('/'))
                 .map((p) => snap(docRef(col, p.slice(col.length + 1))))
-                .filter((s) => filters.every(([f, v]) => s.data()[f] === v));
+                .filter((s) => filters.every((flt) => match(s.data(), flt)));
               return { empty: docs.length === 0, docs, size: docs.length };
             },
           };

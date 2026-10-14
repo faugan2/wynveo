@@ -9,9 +9,10 @@ const ROLE_LABEL = { super: 'Super admin', finance: 'Finance', support: 'Support
 const MENU = [
   { to: '/', label: 'Tableau de bord', end: true },
   { to: '/retraits', label: 'Retraits à valider', badge: 'pending' },
+  { to: '/matchs', label: 'Matchs & cotes' },
   { group: 'BIENTÔT' },
-  { label: 'Utilisateurs' }, { label: 'Vérifications KYC' }, { label: 'Jeux' }, { label: 'Matchs & cotes' },
-  { label: 'Règlement des paris' }, { label: 'Promotions' }, { label: 'Rapports' }, { label: 'Admins & audit' },
+  { label: 'Utilisateurs' }, { label: 'Vérifications KYC' }, { label: 'Jeux' }, { label: 'Promotions' },
+  { label: 'Rapports' }, { label: 'Admins & audit' },
 ];
 
 /** Cadre du back-office : menu latéral sur ordinateur, barre horizontale sur mobile (voir admin.css). */

@@ -45,3 +45,4 @@
 .check input:checked + .box { background: var(--green); border-color: var(--green); }
 .check input:focus-visible + .box { outline: 2px solid var(--focus); outline-offset: 2px; }
 .checkError .box { border-color: var(--red); }
+.segItem:disabled { opacity: .4; cursor: not-allowed; }

@@ -23,7 +23,7 @@ export function SegmentedControl({ options, value, onChange, label }) {
       {options.map((o) => (
         <button
           key={o.value} type="button" role="tab" aria-selected={o.value === value}
-          className={`${s.segItem} ${o.value === value ? s.segOn : ''}`}
+          className={`${s.segItem} ${o.value === value ? s.segOn : ''}`} disabled={o.disabled}
           onClick={() => onChange(o.value)}
         >{o.label}</button>
       ))}

@@ -26,4 +26,5 @@ export function useAdminSession() {
 /** Droits par rôle, alignés sur les Cloud Functions et les règles Firestore. */
 export const can = {
   reviewWithdrawals: (role) => ['super', 'finance'].includes(role),
+  manageSport: (role) => ['super', 'trader'].includes(role),
 };

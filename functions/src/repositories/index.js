@@ -13,6 +13,8 @@ export const betRef = (id) => db.collection(COL.BETS).doc(id);
 export const newBetRef = () => db.collection(COL.BETS).doc();
 export const lnDrawRef = (id) => db.collection(COL.LN_DRAWS).doc(id);
 export const jackpotRoundRef = (id) => db.collection(COL.JACKPOT_ROUNDS).doc(id);
+export const sportEventRef = (id) => db.collection(COL.SPORT_EVENTS).doc(id);
+export const newSportEventRef = () => db.collection(COL.SPORT_EVENTS).doc();
 
 /** Ne garde que les champs du portefeuille que le core manipule. */
 export function walletFromDoc(snap) {

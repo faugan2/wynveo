@@ -3,9 +3,11 @@
  * Les écrans affichent `message` sans jamais connaître Firebase.
  */
 export class AppError extends Error {
-  constructor(code, message) {
+  constructor(code, message, details = null) {
     super(message);
     this.code = code;
+    /** Données utiles à l'écran (ex. nouvelles cotes pour ODDS_CHANGED). */
+    this.details = details;
   }
 }
 
@@ -45,7 +47,7 @@ export function toAppError(err) {
   }
   // Les erreurs des Cloud Functions portent déjà un message en français.
   if (String(code).startsWith('functions/') || err?.details?.code) {
-    return new AppError(err?.details?.code || code, err.message);
+    return new AppError(err?.details?.code || code, err.message, err?.details ?? null);
   }
   return new AppError(code, 'Une erreur est survenue. Réessayez.');
 }

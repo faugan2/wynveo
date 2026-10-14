@@ -3,7 +3,7 @@
 Jeux et paris sportifs, **un seul compte et un seul solde**.
 React (JavaScript) + Vite, Firebase en syntaxe v8 (modules `compat`), Cloud Functions pour tout ce qui touche à l'argent.
 
-## État du projet : étape 1 livrée
+## État du projet : étapes 1, 2 et 3 livrées
 
 | Livré | Détail |
 |---|---|
@@ -13,7 +13,7 @@ React (JavaScript) + Vite, Firebase en syntaxe v8 (modules `compat`), Cloud Func
 | Dépôt | T-Money / Flooz, **paiement simulé**, bonus de bienvenue 100 % jusqu'à 10 000 FCFA sur le 1er dépôt depuis le numéro du compte |
 | Retrait | Numéro vérifié obligatoire, envoi vers le numéro du compte uniquement, plafond 50 000 FCFA/jour sans vérification d'identité, validation automatique ou manuelle |
 | Historique | Filtres Tout / Dépôts / Retraits / Jeux / Sport |
-| Accueil | Choix **Jeux** ou **Sport** (les deux modules arrivent aux étapes 2 et 3) |
+| Accueil | Choix **Jeux** ou **Sport** |
 | Admin | Connexion e-mail + rôle, tableau de bord, retraits à valider (approuver / refuser avec motif), journal d'audit |
 
 **Étape 2 livrée : les 4 jeux**
@@ -31,7 +31,23 @@ conditions de mise remplies, le bonus devient retirable. Les paramètres sont da
 Collections ajoutées : `bets`, `lnDraws`, `jackpotRounds` (lecture seule pour les joueurs).
 En mode démo, Lucky Number tire toutes les 2 minutes et des boutons « Démo : tirer maintenant » sont affichés.
 
-Prochaines étapes proposées : 3. le sport (matchs, coupon, The Odds API, règlement) · 4. admin utilisateurs et transactions · 5. KYC, jeu responsable, notifications · 6. vrai paiement et mise en ligne.
+**Étape 3 livrée : le sport**
+
+| Livré | Détail |
+|---|---|
+| Matchs | Football (1 N 2), basket et tennis (1 2), plus un marché « total » (plus / moins de) ; paris **avant le coup d'envoi** uniquement |
+| Coupon | Simple (un ticket par choix) ou combiné (cotes multipliées, un choix par match, 2 à 10 choix) ; mise 100 – 200 000 FCFA, gain max 5 000 000 FCFA |
+| Cotes qui bougent | Le serveur compare les cotes vues par le joueur aux cotes actuelles ; s'il y a un écart, le joueur doit accepter les nouvelles cotes |
+| Règlement | Automatique dès que le résultat est connu ; match annulé = choix compté à 1 (pari simple remboursé) |
+| The Odds API | Cotes importées toutes les 3 h (moyenne des bookmakers + marge Wynveo de 6 %), scores toutes les 20 min seulement s'il y a un match en cours |
+| Admin « Matchs & cotes » | Créer / modifier un match avec calcul de la marge, suspendre, saisir le score ou annuler, lancer l'import ; rôles Super admin et Trader |
+| Mes paris | Onglet Sport : tickets, choix gagnés / perdus, gain possible ou gain obtenu |
+
+Collection ajoutée : `sportEvents` (lecture seule pour les joueurs). Les cotes modifiées à la main ne sont plus écrasées par l'import.
+Compétitions importées : `packages/core/src/sport/config.js` (`ODDS_API_COMPETITIONS`).
+En mode démo, des matchs sont générés autour de l'heure actuelle, avec des boutons « Démo : terminer le match » et « Faire baisser la cote ».
+
+Prochaines étapes proposées : 4. admin utilisateurs et transactions · 5. KYC, jeu responsable, notifications · 6. vrai paiement et mise en ligne.
 
 ## Organisation du code
 
@@ -101,7 +117,13 @@ FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GCLOUD_PROJECT=demo-wynveo \
    - **Authentication → Méthodes de connexion** → activer **E-mail/Mot de passe** (sert aux joueurs, via une adresse technique `22890123456@joueurs.wynveo.app`, et aux admins) ;
    - **Authentication → Paramètres → Domaines autorisés** : ajouter les domaines des deux sites ;
    - **Firestore** : créer la base (région `europe-west1` conseillée, comme les Functions).
-2. Déployer :
+2. Enregistrer la clé The Odds API comme **secret** (jamais dans le code ni dans `.env`) ; à faire une fois, avant le premier déploiement :
+   ```bash
+   firebase functions:secrets:set ODDS_API_KEY
+   ```
+   Offre gratuite : 500 requêtes / mois. Avec 6 compétitions toutes les 3 h, comptez environ 1 500 requêtes / mois :
+   réduisez la liste des compétitions ou prenez l'offre payante.
+3. Déployer :
    ```bash
    firebase login
    npm run build
@@ -109,7 +131,7 @@ FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GCLOUD_PROJECT=demo-wynveo \
    firebase target:apply hosting admin my-streakers-admin    # créer d'abord ce 2e site dans Hosting
    npm run deploy
    ```
-3. Nommer le premier super admin (clé de compte de service : Console → Paramètres → Comptes de service) :
+4. Nommer le premier super admin (clé de compte de service : Console → Paramètres → Comptes de service) :
    ```bash
    GOOGLE_APPLICATION_CREDENTIALS=./service-account.json \
      node functions/scripts/set-admin.mjs vous@domaine.com super "MotDePasseSolide"

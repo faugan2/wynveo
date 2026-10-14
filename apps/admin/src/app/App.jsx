@@ -4,6 +4,7 @@ import { AdminShell } from '../layout/AdminShell.jsx';
 import { LoginPage } from '../features/auth/LoginPage.jsx';
 import { DashboardPage } from '../features/dashboard/DashboardPage.jsx';
 import { WithdrawalsPage } from '../features/withdrawals/WithdrawalsPage.jsx';
+import { SportEventsPage } from '../features/sport/SportEventsPage.jsx';
 
 function Gate() {
   const { status } = useAdminSession();
@@ -14,6 +15,7 @@ function Gate() {
       <Route element={<AdminShell />}>
         <Route index element={<DashboardPage />} />
         <Route path="retraits" element={<WithdrawalsPage />} />
+        <Route path="matchs" element={<SportEventsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

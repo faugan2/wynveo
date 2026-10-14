@@ -18,4 +18,5 @@ export const COL = Object.freeze({
   BETS: 'bets',
   LN_DRAWS: 'lnDraws',
   JACKPOT_ROUNDS: 'jackpotRounds',
+  SPORT_EVENTS: 'sportEvents',
 });

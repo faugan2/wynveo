@@ -85,3 +85,4 @@ export const withdrawalAdminService = {
     return res.data;
   }),
 };
+export { sportAdminService } from './sportAdminService.js';

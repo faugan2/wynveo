@@ -15,10 +15,12 @@ function load() {
       (s.bets ??= []).forEach((b) => revive(b, ['createdAt', 'settledAt', 'drawAt']));
       Object.values(s.lnDraws ??= {}).forEach((d) => revive(d, ['drawAt']));
       Object.values(s.jackpotRounds ??= {}).forEach((r) => revive(r, ['drawAt']));
+      Object.values(s.sportEvents ??= {}).forEach((e) => revive(e, ['startAt']));
+      s.bets.forEach((b) => b.selections?.forEach((x) => revive(x, ['startAt'])));
       return s;
     }
   } catch { /* stockage indisponible */ }
-  return { session: null, accounts: {}, users: {}, wallets: {}, transactions: [], bets: [], lnDraws: {}, jackpotRounds: {} };
+  return { session: null, accounts: {}, users: {}, wallets: {}, transactions: [], bets: [], lnDraws: {}, jackpotRounds: {}, sportEvents: {} };
 }
 
 export const state = load();
