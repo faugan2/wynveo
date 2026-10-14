@@ -13,6 +13,7 @@ const LOOK = {
   [TX_TYPE.WIN]: { icon: 'check', bg: '#22b14c33', color: 'var(--green-text)' },
   [TX_TYPE.REFUND]: { icon: 'back', bg: '#2f7cf633', color: 'var(--blue-text)' },
   [TX_TYPE.ADJUSTMENT]: { icon: 'info', bg: '#2a2468', color: 'var(--fg-muted)' },
+  [TX_TYPE.BONUS_UNLOCK]: { icon: 'gift', bg: '#22b14c33', color: 'var(--green-text)' },
 };
 
 function title(tx) {

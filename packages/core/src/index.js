@@ -9,3 +9,5 @@ export * from './transactions.js';
 export * from './profile.js';
 export * from './auth.js';
 export * from './wallet.js';
+export * from './random.js';
+export * from './games/index.js';

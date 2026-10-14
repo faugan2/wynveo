@@ -17,7 +17,7 @@ const TABS = [
 
 /** Cadre des écrans connectés : barre du haut (logo, solde, onglets) + contenu. */
 export function AppShell() {
-  const { wallet } = useSession();
+  const { wallet, heldBalance } = useSession();
   const onGames = useMatch(`${ROUTES.games}/*`);
   const onSport = useMatch(`${ROUTES.sport}/*`);
   const wide = Boolean(onGames || onSport);
@@ -36,7 +36,7 @@ export function AppShell() {
             ))}
           </nav>
           <Link to={ROUTES.wallet} className={s.wallet} aria-label="Mon solde">
-            Solde : <b>{formatAmount(displayBalance(wallet))}</b> FCFA
+            Solde : <b>{formatAmount(heldBalance ?? displayBalance(wallet))}</b> FCFA
           </Link>
         </div>
       </header>

@@ -18,6 +18,8 @@ export function SessionProvider({ children }) {
   const [profile, setProfile] = useState(undefined);
   const [wallet, setWallet] = useState(null);
   const [error, setError] = useState(null);
+  // Solde affiché figé pendant une animation de jeu, pour ne pas dévoiler le résultat avant la fin.
+  const [heldBalance, setHeldBalance] = useState(null);
 
   useEffect(() => authService.onAuthChange(setUser), []);
 
@@ -39,8 +41,11 @@ export function SessionProvider({ children }) {
     if (user === null) status = 'guest';
     else if (user && profile === null) status = 'needsProfile';
     else if (user && profile && wallet) status = 'ready';
-    return { status, user: user ?? null, profile: profile ?? null, wallet, error, signOut: authService.signOut };
-  }, [user, profile, wallet, error]);
+    return {
+      status, user: user ?? null, profile: profile ?? null, wallet, error, signOut: authService.signOut,
+      heldBalance, holdBalance: setHeldBalance, releaseBalance: () => setHeldBalance(null),
+    };
+  }, [user, profile, wallet, error, heldBalance]);
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

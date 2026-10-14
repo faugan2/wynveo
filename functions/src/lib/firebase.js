@@ -15,4 +15,7 @@ export const COL = Object.freeze({
   TRANSACTIONS: 'transactions',
   ADMIN_LOGS: 'adminLogs',
   REFERRAL_CODES: 'referralCodes',
+  BETS: 'bets',
+  LN_DRAWS: 'lnDraws',
+  JACKPOT_ROUNDS: 'jackpotRounds',
 });

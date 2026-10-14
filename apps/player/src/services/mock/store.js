@@ -2,7 +2,7 @@
  * Mini base de données en mémoire pour le mode démo (VITE_DATA_SOURCE=mock).
  * Sauvegardée dans le navigateur pour survivre au rechargement de la page.
  */
-const KEY = 'wynveo-mock-v2';
+const KEY = 'wynveo-mock-v3';
 const listeners = new Set();
 
 function load() {
@@ -10,11 +10,15 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const s = JSON.parse(raw);
-      s.transactions.forEach((t) => { t.createdAt = new Date(t.createdAt); t.updatedAt = t.updatedAt ? new Date(t.updatedAt) : null; });
+      const revive = (o, keys) => keys.forEach((k) => { if (o[k]) o[k] = new Date(o[k]); });
+      s.transactions.forEach((t) => revive(t, ['createdAt', 'updatedAt']));
+      (s.bets ??= []).forEach((b) => revive(b, ['createdAt', 'settledAt', 'drawAt']));
+      Object.values(s.lnDraws ??= {}).forEach((d) => revive(d, ['drawAt']));
+      Object.values(s.jackpotRounds ??= {}).forEach((r) => revive(r, ['drawAt']));
       return s;
     }
   } catch { /* stockage indisponible */ }
-  return { session: null, accounts: {}, users: {}, wallets: {}, transactions: [] };
+  return { session: null, accounts: {}, users: {}, wallets: {}, transactions: [], bets: [], lnDraws: {}, jackpotRounds: {} };
 }
 
 export const state = load();

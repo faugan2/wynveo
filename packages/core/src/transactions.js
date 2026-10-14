@@ -7,6 +7,7 @@ export const TX_TYPE = Object.freeze({
   WIN: 'win',
   REFUND: 'refund',
   ADJUSTMENT: 'adjustment',
+  BONUS_UNLOCK: 'bonus_unlock',
 });
 
 /** Cycle de vie d'une opération. */
@@ -28,6 +29,7 @@ export const TX_TYPE_LABEL = Object.freeze({
   bonus: 'Bonus',
   bet: 'Mise',
   win: 'Gain',
+  bonus_unlock: 'Bonus débloqué',
   refund: 'Remboursement',
   adjustment: 'Ajustement',
 });
@@ -58,13 +60,14 @@ export function statusTone(status) {
 export function signedAmount(tx) {
   const outgoing = tx.type === TX_TYPE.WITHDRAWAL || tx.type === TX_TYPE.BET;
   if (tx.type === TX_TYPE.ADJUSTMENT) return tx.amount;
+  if (tx.type === TX_TYPE.BONUS_UNLOCK) return 0;
   return outgoing ? -Math.abs(tx.amount) : Math.abs(tx.amount);
 }
 
 /** Filtres de l'écran Historique. */
 export const HISTORY_FILTERS = Object.freeze([
   { id: 'all', label: 'Tout', types: null },
-  { id: 'deposits', label: 'Dépôts', types: [TX_TYPE.DEPOSIT, TX_TYPE.BONUS] },
+  { id: 'deposits', label: 'Dépôts', types: [TX_TYPE.DEPOSIT, TX_TYPE.BONUS, TX_TYPE.BONUS_UNLOCK] },
   { id: 'withdrawals', label: 'Retraits', types: [TX_TYPE.WITHDRAWAL] },
   { id: 'games', label: 'Jeux', types: [TX_TYPE.BET, TX_TYPE.WIN], product: 'games' },
   { id: 'sport', label: 'Sport', types: [TX_TYPE.BET, TX_TYPE.WIN], product: 'sport' },

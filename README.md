@@ -16,7 +16,22 @@ React (JavaScript) + Vite, Firebase en syntaxe v8 (modules `compat`), Cloud Func
 | Accueil | Choix **Jeux** ou **Sport** (les deux modules arrivent aux étapes 2 et 3) |
 | Admin | Connexion e-mail + rôle, tableau de bord, retraits à valider (approuver / refuser avec motif), journal d'audit |
 
-Prochaines étapes proposées : 2. les 4 jeux (tirages côté serveur) · 3. le sport (matchs, coupon, The Odds API, règlement) · 4. KYC, jeu responsable, notifications · 5. le reste de l'admin.
+**Étape 2 livrée : les 4 jeux**
+
+| Jeu | Fonctionnement | Retour au joueur |
+|---|---|---|
+| Lucky Spin | Roue à 8 cases, mise 100 – 10 000, résultat instantané | 89,9 % |
+| Mystery Box | 9 coffres tirés avant ouverture, gain = coffre choisi | 89 % |
+| Lucky Number | 5 numéros sur 50, mise 100 – 1 000, tirage toutes les 15 min (Cloud Scheduler) | ≈ 70 % |
+| Jackpot quotidien | Tickets à 1 000 FCFA, 80 % vont à la cagnotte, 1 gagnant chaque jour à 20:00 | 80 % |
+
+Tous les tirages se font dans les Cloud Functions (`crypto.randomInt`), dans des transactions Firestore.
+Les mises sont payées par l'argent réel puis par le bonus ; les gains reviennent au prorata ; une fois les
+conditions de mise remplies, le bonus devient retirable. Les paramètres sont dans `packages/core/src/games/config.js`.
+Collections ajoutées : `bets`, `lnDraws`, `jackpotRounds` (lecture seule pour les joueurs).
+En mode démo, Lucky Number tire toutes les 2 minutes et des boutons « Démo : tirer maintenant » sont affichés.
+
+Prochaines étapes proposées : 3. le sport (matchs, coupon, The Odds API, règlement) · 4. admin utilisateurs et transactions · 5. KYC, jeu responsable, notifications · 6. vrai paiement et mise en ligne.
 
 ## Organisation du code
 

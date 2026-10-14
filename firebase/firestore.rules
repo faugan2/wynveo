@@ -27,6 +27,22 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Paris des jeux (et plus tard du sport) : lecture de ses propres paris uniquement.
+    match /bets/{betId} {
+      allow read: if (signedIn() && resource.data.uid == request.auth.uid) || isStaff();
+      allow write: if false;
+    }
+
+    // Tirages : informations publiques pour tout joueur connecté (numéros tirés, cagnotte, gagnant).
+    match /lnDraws/{drawId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /jackpotRounds/{roundId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
     match /adminLogs/{id} {
       allow read: if role() == 'super';
       allow write: if false;

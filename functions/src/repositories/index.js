@@ -9,6 +9,10 @@ export const walletRef = (uid) => db.collection(COL.WALLETS).doc(uid);
 export const txRef = (id) => db.collection(COL.TRANSACTIONS).doc(id);
 export const newTxRef = () => db.collection(COL.TRANSACTIONS).doc();
 export const referralRef = (code) => db.collection(COL.REFERRAL_CODES).doc(code);
+export const betRef = (id) => db.collection(COL.BETS).doc(id);
+export const newBetRef = () => db.collection(COL.BETS).doc();
+export const lnDrawRef = (id) => db.collection(COL.LN_DRAWS).doc(id);
+export const jackpotRoundRef = (id) => db.collection(COL.JACKPOT_ROUNDS).doc(id);
 
 /** Ne garde que les champs du portefeuille que le core manipule. */
 export function walletFromDoc(snap) {
@@ -22,6 +26,8 @@ export function walletFromDoc(snap) {
     depositCount: d.depositCount ?? 0,
     // anciens portefeuilles : un dépôt existant vaut bonus déjà attribué
     welcomeBonusGranted: d.welcomeBonusGranted ?? (d.depositCount ?? 0) > 0,
+    totalStaked: d.totalStaked ?? 0,
+    totalWon: d.totalWon ?? 0,
     withdrawnToday: d.withdrawnToday ?? { date: null, amount: 0 },
   };
 }
