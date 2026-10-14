@@ -17,12 +17,19 @@ const AUTH_MESSAGES = {
   'auth/quota-exceeded': "Trop de SMS envoyés aujourd'hui. Réessayez plus tard.",
   'auth/network-request-failed': 'Pas de connexion internet.',
   'auth/captcha-check-failed': 'La vérification anti-robot a échoué. Rechargez la page.',
+  'auth/operation-not-allowed': "Ce mode de connexion n'est pas activé dans la console Firebase (Authentication > Méthodes de connexion).",
+  'auth/billing-not-enabled': 'La connexion par SMS demande le forfait Blaze sur le projet Firebase.',
+  'auth/unauthorized-domain': 'Ce domaine doit être ajouté dans Firebase : Authentication > Paramètres > Domaines autorisés.',
+  'auth/invalid-api-key': 'Configuration Firebase invalide : vérifiez la clé dans apps/*/.env.',
 };
 
 export function toAppError(err) {
   if (err instanceof AppError) return err;
   const code = err?.details?.code || err?.code || 'UNKNOWN';
   if (AUTH_MESSAGES[code]) return new AppError(code, AUTH_MESSAGES[code]);
+  if (code === 'functions/not-found' || code === 'functions/internal') {
+    return new AppError(code, 'Le serveur Wynveo ne répond pas : les Cloud Functions sont-elles déployées (npm run deploy) ?');
+  }
   if (code === 'functions/unavailable' || code === 'unavailable') {
     return new AppError(code, 'Service momentanément indisponible. Réessayez.');
   }

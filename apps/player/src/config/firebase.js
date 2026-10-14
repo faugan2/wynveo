@@ -14,13 +14,28 @@ import 'firebase/compat/functions';
 
 const env = import.meta.env;
 
+/**
+ * Configuration par défaut : celle de votre projet. Ces valeurs ne sont pas
+ * secrètes (Firebase les envoie de toute façon au navigateur) ; la sécurité
+ * vient des règles Firestore. Un fichier .env peut les remplacer, par exemple
+ * pour pointer vers un autre projet (test / production).
+ */
+const DEFAULT_CONFIG = {
+  apiKey: 'AIzaSyB-vQnuHyGK4dVFaFa2N-MZAfextw59HPk',
+  authDomain: 'my-streakers.firebaseapp.com',
+  projectId: 'my-streakers',
+  storageBucket: 'my-streakers.firebasestorage.app',
+  messagingSenderId: '990322731756',
+  appId: '1:990322731756:web:aa67fc448ca93811fc53c9',
+};
+
 const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY,
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY || DEFAULT_CONFIG.apiKey,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || DEFAULT_CONFIG.authDomain,
+  projectId: env.VITE_FIREBASE_PROJECT_ID || DEFAULT_CONFIG.projectId,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || DEFAULT_CONFIG.storageBucket,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || DEFAULT_CONFIG.messagingSenderId,
+  appId: env.VITE_FIREBASE_APP_ID || DEFAULT_CONFIG.appId,
 };
 
 let app;
