@@ -13,10 +13,10 @@ export function WelcomePage() {
       </div>
       <div className={s.center}>
         <h1 className={s.headline}>Jeux et paris sportifs, un seul compte</h1>
-        <p className={s.lead}>Déposez une fois avec T-Money ou Flooz, jouez partout, retirez vos gains en quelques minutes.</p>
+        <p className={s.lead}>Créez votre compte avec votre numéro, déposez avec T-Money ou Flooz, jouez partout, retirez vos gains en quelques minutes.</p>
       </div>
       <div className={s.actions}>
-        <Button as={Link} to={`${ROUTES.login}?nouveau=1`} block>Créer un compte</Button>
+        <Button as={Link} to={ROUTES.register} block>Créer un compte</Button>
         <Button as={Link} to={ROUTES.login} variant="ghost" block>Se connecter</Button>
         <p className={s.legal}>18+ · Jouez de manière responsable</p>
       </div>

@@ -5,6 +5,7 @@ import { useSession } from '../../hooks/SessionProvider.jsx';
 import { ROUTES } from '../../app/routes.js';
 import { BalanceHero } from '../wallet/components/BalanceHero.jsx';
 import { BonusProgress } from '../wallet/components/BonusProgress.jsx';
+import { VerifyNumberCard } from '../wallet/components/VerifyNumberCard.jsx';
 
 const greeting = () => (new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir');
 
@@ -21,9 +22,10 @@ export function HomePage() {
 
       <BalanceHero wallet={wallet} compact />
 
-      {wallet.depositCount === 0 && (
+      {!profile.phoneVerified && <VerifyNumberCard phone={profile.phone} />}
+      {profile.phoneVerified && !wallet.welcomeBonusGranted && (
         <Notice tone="warn" icon="gift">
-          <b style={{ color: '#fff' }}>Bonus de bienvenue :</b> {WELCOME_BONUS.rate * 100} % de votre premier dépôt, jusqu'à {formatFCFA(WELCOME_BONUS.cap)}.{' '}
+          <b style={{ color: '#fff' }}>Bonus de bienvenue :</b> {WELCOME_BONUS.rate * 100} % de votre prochain dépôt depuis votre numéro, jusqu'à {formatFCFA(WELCOME_BONUS.cap)}.{' '}
           <Link to={ROUTES.deposit}>Déposer maintenant</Link>
         </Notice>
       )}

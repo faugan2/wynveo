@@ -9,6 +9,7 @@ export function mapProfile(snap) {
     fullName: d.fullName,
     phone: d.phone,
     referralCode: d.referralCode,
+    phoneVerified: Boolean(d.phoneVerified),
     kycStatus: d.kycStatus ?? 'none',
     status: d.status ?? 'active',
     createdAt: toDate(d.createdAt),
@@ -24,6 +25,7 @@ export function mapWallet(snap) {
     totalDeposited: d.totalDeposited ?? 0,
     totalWithdrawn: d.totalWithdrawn ?? 0,
     depositCount: d.depositCount ?? 0,
+    welcomeBonusGranted: d.welcomeBonusGranted ?? (d.depositCount ?? 0) > 0,
     withdrawnToday: d.withdrawnToday ?? { date: null, amount: 0 },
   };
 }

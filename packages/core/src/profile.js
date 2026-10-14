@@ -44,6 +44,11 @@ export function makeReferralCode(fullName, random = Math.random) {
   return base + String(Math.floor(random() * 1000)).padStart(3, '0');
 }
 
+export const PHONE_LABEL = Object.freeze({
+  true: 'Numéro vérifié',
+  false: 'Numéro à confirmer',
+});
+
 /** Initiales pour l'avatar : "Kossi Amouzou" -> "KA". */
 export function initials(fullName) {
   return String(fullName ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('') || '?';

@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
-import { maskPhone } from '@wynveo/core';
-import { Card, EmptyState, ListRow, SectionTitle, Skeleton } from '../../ui/index.js';
+import { maskPhone, PHONE_LABEL } from '@wynveo/core';
+import { Card, EmptyState, ListRow, Pill, SectionTitle, Skeleton } from '../../ui/index.js';
 import { useSession } from '../../hooks/SessionProvider.jsx';
 import { useTransactions } from '../../hooks/useTransactions.js';
 import { ROUTES } from '../../app/routes.js';
 import { BalanceHero } from './components/BalanceHero.jsx';
 import { BonusProgress } from './components/BonusProgress.jsx';
+import { VerifyNumberCard } from './components/VerifyNumberCard.jsx';
 import { TransactionRow } from './components/TransactionRow.jsx';
 
 export function WalletPage() {
@@ -14,11 +15,16 @@ export function WalletPage() {
   return (
     <>
       <BalanceHero wallet={wallet} />
+      {!profile.phoneVerified && <VerifyNumberCard phone={profile.phone} compact />}
       <BonusProgress wallet={wallet} />
 
       <SectionTitle>Numéro de retrait</SectionTitle>
       <Card flush>
-        <ListRow title={maskPhone(profile.phone)} subtitle="Vos retraits sont envoyés uniquement sur le numéro de votre compte." />
+        <ListRow
+          title={maskPhone(profile.phone)}
+          subtitle="Vos retraits sont envoyés uniquement sur le numéro de votre compte."
+          right={<Pill tone={profile.phoneVerified ? 'good' : 'warn'}>{PHONE_LABEL[profile.phoneVerified]}</Pill>}
+        />
       </Card>
 
       <SectionTitle action={<Link to={ROUTES.history}>Tout l'historique</Link>}>Dernières opérations</SectionTitle>

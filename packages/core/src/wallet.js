@@ -20,8 +20,14 @@ export function createEmptyWallet() {
     totalDeposited: 0,
     totalWithdrawn: 0,
     depositCount: 0,
+    welcomeBonusGranted: false,
     withdrawnToday: { date: null, amount: 0 },
   };
+}
+
+/** Le bonus de bienvenue est-il encore à prendre pour ce dépôt ? */
+export function isWelcomeBonusEligible(wallet, { fromOwnNumber }) {
+  return Boolean(fromOwnNumber) && !wallet?.welcomeBonusGranted;
 }
 
 /** Argent réellement retirable (le bonus ne l'est pas). */
@@ -48,8 +54,12 @@ export function validateDepositAmount(amount, limits = DEPOSIT_LIMITS) {
  * @param {object} p.wallet
  * @param {string} p.kycStatus
  * @param {string} p.today  clé de journée (dayKey)
+ * @param {boolean} p.phoneVerified  numéro confirmé par un dépôt Mobile Money
  */
-export function validateWithdrawal({ amount, wallet, kycStatus, today }, limits = WITHDRAWAL_LIMITS) {
+export function validateWithdrawal({ amount, wallet, kycStatus, today, phoneVerified }, limits = WITHDRAWAL_LIMITS) {
+  if (!phoneVerified) {
+    return fail('PHONE_UNVERIFIED', 'Faites d\'abord un dépôt depuis votre propre numéro : il confirme que ce numéro vous appartient.');
+  }
   if (!isValidAmount(amount)) return fail('AMOUNT_INVALID', 'Entrez un montant.');
   if (amount < limits.min) return fail('AMOUNT_TOO_LOW', `Le retrait minimum est de ${formatFCFA(limits.min)}.`);
   if (amount > limits.max) return fail('AMOUNT_TOO_HIGH', `Le retrait maximum est de ${formatFCFA(limits.max)} par opération.`);
@@ -67,12 +77,11 @@ export function withdrawalReviewMode({ amount, kycStatus }, limits = WITHDRAWAL_
 }
 
 /**
- * Dépôt confirmé par l'opérateur : crédite le solde et, au premier dépôt,
- * le bonus de bienvenue. Renvoie { wallet, bonus }.
+ * Dépôt confirmé par l'opérateur : crédite le solde et, si le dépôt vient du
+ * numéro du compte, le bonus de bienvenue (une seule fois). Renvoie { wallet, bonus }.
  */
-export function applyDeposit(wallet, amount, bonusConfig = WELCOME_BONUS) {
-  const isFirst = (wallet.depositCount ?? 0) === 0;
-  const bonus = computeWelcomeBonus(amount, isFirst, bonusConfig);
+export function applyDeposit(wallet, amount, { fromOwnNumber = false } = {}, bonusConfig = WELCOME_BONUS) {
+  const bonus = computeWelcomeBonus(amount, isWelcomeBonusEligible(wallet, { fromOwnNumber }), bonusConfig);
   return {
     bonus,
     wallet: {
@@ -82,6 +91,7 @@ export function applyDeposit(wallet, amount, bonusConfig = WELCOME_BONUS) {
       bonusWagerRemaining: (wallet.bonusWagerRemaining ?? 0) + bonus.wagerRequired,
       totalDeposited: (wallet.totalDeposited ?? 0) + amount,
       depositCount: (wallet.depositCount ?? 0) + 1,
+      welcomeBonusGranted: Boolean(wallet.welcomeBonusGranted) || bonus.amount > 0,
     },
   };
 }

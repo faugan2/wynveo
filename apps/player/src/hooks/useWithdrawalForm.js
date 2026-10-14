@@ -16,7 +16,8 @@ export function useWithdrawalForm() {
   const action = useAsyncAction(walletService.requestWithdrawal);
 
   const available = withdrawableAmount(wallet);
-  const check = validateWithdrawal({ amount, wallet, kycStatus: profile?.kycStatus, today: dayKey() });
+  const phoneVerified = Boolean(profile?.phoneVerified);
+  const check = validateWithdrawal({ amount, wallet, kycStatus: profile?.kycStatus, today: dayKey(), phoneVerified });
 
   async function submit() {
     setTouched(true);
@@ -35,6 +36,8 @@ export function useWithdrawalForm() {
     available,
     bonusBalance: wallet?.bonusBalance ?? 0,
     kycStatus: profile?.kycStatus,
+    phoneVerified,
+    phone: profile?.phone,
     destination: maskPhone(profile?.phone),
     operator, setOperator,
     amount, setAmount: (v) => { setAmount(v); action.clearError(); },

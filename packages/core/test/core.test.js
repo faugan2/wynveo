@@ -7,6 +7,7 @@ import {
   createEmptyWallet, validateDepositAmount, validateWithdrawal, withdrawalReviewMode,
   applyDeposit, applyWithdrawalHold, applyWithdrawalRefund, applyWithdrawalPaid,
   currentDailyCounter, dayKey, signedAmount, matchesHistoryFilter,
+  phoneToAuthEmail, authEmailToPhone, validatePassword, isWelcomeBonusEligible,
 } from '../src/index.js';
 
 const NB = ' ';
@@ -51,32 +52,56 @@ test('références et profil', () => {
   assert.equal(initials('Kossi Amouzou'), 'KA');
 });
 
+test('connexion par mot de passe : adresse technique et mot de passe', () => {
+  assert.equal(phoneToAuthEmail('+22890123456'), '22890123456@joueurs.wynveo.app');
+  assert.equal(authEmailToPhone('22890123456@joueurs.wynveo.app'), '+22890123456');
+  assert.equal(authEmailToPhone('admin@wynveo.com'), null);
+  assert.equal(authEmailToPhone('22890123456@joueurs-wynveo.app'), null);
+  assert.equal(validatePassword('court1').code, 'PASSWORD_SHORT');
+  assert.equal(validatePassword('motdepasse').code, 'PASSWORD_WEAK');
+  assert.equal(validatePassword('12345678').code, 'PASSWORD_WEAK');
+  assert.equal(validatePassword('lome2026').ok, true);
+});
+
+test('bonus seulement sur le premier dépôt depuis son propre numéro', () => {
+  const w = createEmptyWallet();
+  const other = applyDeposit(w, 5000, { fromOwnNumber: false });
+  assert.equal(other.bonus.amount, 0, "pas de bonus depuis le numéro d'un autre");
+  assert.equal(other.wallet.welcomeBonusGranted, false);
+  assert.equal(isWelcomeBonusEligible(other.wallet, { fromOwnNumber: true }), true);
+  const own = applyDeposit(other.wallet, 5000, { fromOwnNumber: true });
+  assert.equal(own.bonus.amount, 5000);
+  assert.equal(own.wallet.welcomeBonusGranted, true);
+  assert.equal(applyDeposit(own.wallet, 5000, { fromOwnNumber: true }).bonus.amount, 0);
+});
+
 test('dépôt : limites et crédit avec bonus au premier dépôt seulement', () => {
   assert.equal(validateDepositAmount(100).code, 'AMOUNT_TOO_LOW');
   assert.equal(validateDepositAmount(5000).ok, true);
   assert.equal(validateDepositAmount(2_000_000).code, 'AMOUNT_TOO_HIGH');
   let w = createEmptyWallet();
-  const first = applyDeposit(w, 5000);
+  const first = applyDeposit(w, 5000, { fromOwnNumber: true });
   assert.equal(first.wallet.balance, 5000);
   assert.equal(first.wallet.bonusBalance, 5000);
   assert.equal(first.wallet.depositCount, 1);
-  const second = applyDeposit(first.wallet, 20000);
+  const second = applyDeposit(first.wallet, 20000, { fromOwnNumber: true });
   assert.equal(second.bonus.amount, 0);
   assert.equal(second.wallet.balance, 25000);
   assert.equal(second.wallet.totalDeposited, 25000);
 });
 
-test('retrait : solde, plafond sans KYC, mode de validation', () => {
+test('retrait : numéro vérifié, solde, plafond sans KYC, mode de validation', () => {
   const today = '2026-10-14';
   const wallet = { ...createEmptyWallet(), balance: 80000, bonusBalance: 5000 };
-  assert.equal(validateWithdrawal({ amount: 500, wallet, kycStatus: 'none', today }).code, 'AMOUNT_TOO_LOW');
-  assert.equal(validateWithdrawal({ amount: 90000, wallet, kycStatus: 'verified', today }).code, 'INSUFFICIENT_FUNDS');
-  assert.equal(validateWithdrawal({ amount: 60000, wallet, kycStatus: 'none', today }).code, 'KYC_REQUIRED');
-  assert.equal(validateWithdrawal({ amount: 60000, wallet, kycStatus: 'verified', today }).ok, true);
+  assert.equal(validateWithdrawal({ amount: 5000, wallet, kycStatus: 'verified', today, phoneVerified: false }).code, 'PHONE_UNVERIFIED');
+  assert.equal(validateWithdrawal({ amount: 500, wallet, kycStatus: 'none', today, phoneVerified: true }).code, 'AMOUNT_TOO_LOW');
+  assert.equal(validateWithdrawal({ amount: 90000, wallet, kycStatus: 'verified', today, phoneVerified: true }).code, 'INSUFFICIENT_FUNDS');
+  assert.equal(validateWithdrawal({ amount: 60000, wallet, kycStatus: 'none', today, phoneVerified: true }).code, 'KYC_REQUIRED');
+  assert.equal(validateWithdrawal({ amount: 60000, wallet, kycStatus: 'verified', today, phoneVerified: true }).ok, true);
   const already = { ...wallet, withdrawnToday: { date: today, amount: 40000 } };
-  assert.equal(validateWithdrawal({ amount: 15000, wallet: already, kycStatus: 'none', today }).code, 'KYC_REQUIRED');
+  assert.equal(validateWithdrawal({ amount: 15000, wallet: already, kycStatus: 'none', today, phoneVerified: true }).code, 'KYC_REQUIRED');
   const yesterday = { ...wallet, withdrawnToday: { date: '2026-10-13', amount: 40000 } };
-  assert.equal(validateWithdrawal({ amount: 15000, wallet: yesterday, kycStatus: 'none', today }).ok, true);
+  assert.equal(validateWithdrawal({ amount: 15000, wallet: yesterday, kycStatus: 'none', today, phoneVerified: true }).ok, true);
   assert.equal(withdrawalReviewMode({ amount: 20000, kycStatus: 'verified' }), 'auto');
   assert.equal(withdrawalReviewMode({ amount: 20000, kycStatus: 'none' }), 'manual');
   assert.equal(withdrawalReviewMode({ amount: 30000, kycStatus: 'verified' }), 'manual');

@@ -5,7 +5,7 @@
  * status :
  *  - 'loading'      : on ne sait pas encore
  *  - 'guest'        : personne n'est connecté
- *  - 'needsProfile' : connecté par SMS mais inscription non terminée
+ *  - 'needsProfile' : compte créé mais profil pas encore enregistré
  *  - 'ready'        : profil et portefeuille disponibles
  */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';

@@ -10,6 +10,13 @@ export class AppError extends Error {
 }
 
 const AUTH_MESSAGES = {
+  'auth/email-already-in-use': 'Ce numéro a déjà un compte. Connectez-vous.',
+  'auth/invalid-credential': 'Numéro ou mot de passe incorrect.',
+  'auth/wrong-password': 'Numéro ou mot de passe incorrect.',
+  'auth/user-not-found': 'Numéro ou mot de passe incorrect.',
+  'auth/invalid-login-credentials': 'Numéro ou mot de passe incorrect.',
+  'auth/weak-password': 'Mot de passe trop faible : au moins 8 caractères, avec lettres et chiffres.',
+  'auth/user-disabled': 'Ce compte est désactivé. Contactez le support.',
   'auth/invalid-phone-number': 'Ce numéro de téléphone est invalide.',
   'auth/invalid-verification-code': 'Code incorrect. Vérifiez le SMS et réessayez.',
   'auth/code-expired': 'Ce code a expiré. Demandez-en un nouveau.',
@@ -17,7 +24,7 @@ const AUTH_MESSAGES = {
   'auth/quota-exceeded': "Trop de SMS envoyés aujourd'hui. Réessayez plus tard.",
   'auth/network-request-failed': 'Pas de connexion internet.',
   'auth/captcha-check-failed': 'La vérification anti-robot a échoué. Rechargez la page.',
-  'auth/operation-not-allowed': "Ce mode de connexion n'est pas activé dans la console Firebase (Authentication > Méthodes de connexion).",
+  'auth/operation-not-allowed': "La connexion E-mail/Mot de passe n'est pas activée dans la console Firebase (Authentication > Méthodes de connexion).",
   'auth/billing-not-enabled': 'La connexion par SMS demande le forfait Blaze sur le projet Firebase.',
   'auth/unauthorized-domain': 'Ce domaine doit être ajouté dans Firebase : Authentication > Paramètres > Domaines autorisés.',
   'auth/invalid-api-key': 'Configuration Firebase invalide : vérifiez la clé dans apps/*/.env.',

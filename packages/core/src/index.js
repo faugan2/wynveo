@@ -7,4 +7,5 @@ export * from './bonus.js';
 export * from './reference.js';
 export * from './transactions.js';
 export * from './profile.js';
+export * from './auth.js';
 export * from './wallet.js';

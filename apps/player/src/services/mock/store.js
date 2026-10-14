@@ -2,7 +2,7 @@
  * Mini base de données en mémoire pour le mode démo (VITE_DATA_SOURCE=mock).
  * Sauvegardée dans le navigateur pour survivre au rechargement de la page.
  */
-const KEY = 'wynveo-mock-v1';
+const KEY = 'wynveo-mock-v2';
 const listeners = new Set();
 
 function load() {
@@ -14,7 +14,7 @@ function load() {
       return s;
     }
   } catch { /* stockage indisponible */ }
-  return { session: null, users: {}, wallets: {}, transactions: [] };
+  return { session: null, accounts: {}, users: {}, wallets: {}, transactions: [] };
 }
 
 export const state = load();

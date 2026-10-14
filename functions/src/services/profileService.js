@@ -7,11 +7,12 @@ import {
 } from '../core/index.js';
 
 /**
- * Termine l'inscription après la connexion par SMS :
+ * Termine l'inscription juste après la création du compte (numéro + mot de passe) :
  * crée le profil, le portefeuille et le code parrain du joueur.
+ * Le numéro reste "à confirmer" jusqu'au premier dépôt fait depuis ce numéro.
  * Sans effet si le profil existe déjà.
  */
-export async function completeProfile(uid, phone, input) {
+export async function completeProfile(uid, { phone, phoneVerified }, input) {
   if (!phone) throw new HttpsError('failed-precondition', 'Connectez-vous avec votre numéro de téléphone.');
   const name = assertRule(validateFullName(input?.fullName)).value;
   const referral = assertRule(validateReferralCode(input?.referralCode)).value;
@@ -40,6 +41,8 @@ export async function completeProfile(uid, phone, input) {
       phone,
       referralCode: myCode,
       referredBy,
+      phoneVerified: Boolean(phoneVerified),
+      phoneVerifiedAt: phoneVerified ? FieldValue.serverTimestamp() : null,
       kycStatus: KYC_STATUS.NONE,
       status: ACCOUNT_STATUS.ACTIVE,
       ageConfirmedAt: FieldValue.serverTimestamp(),

@@ -10,7 +10,7 @@
   "scripts": {
     "sync-core": "node scripts/sync-core.mjs",
     "set-admin": "node scripts/set-admin.mjs",
-    "test": "node --test --experimental-test-module-mocks"
+    "test": "node --test --experimental-test-module-mocks test/*.test.js"
   },
   "dependencies": {
     "firebase-admin": "12.7.0",

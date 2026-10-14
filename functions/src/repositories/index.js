@@ -20,6 +20,8 @@ export function walletFromDoc(snap) {
     totalDeposited: d.totalDeposited ?? 0,
     totalWithdrawn: d.totalWithdrawn ?? 0,
     depositCount: d.depositCount ?? 0,
+    // anciens portefeuilles : un dépôt existant vaut bonus déjà attribué
+    welcomeBonusGranted: d.welcomeBonusGranted ?? (d.depositCount ?? 0) > 0,
     withdrawnToday: d.withdrawnToday ?? { date: null, amount: 0 },
   };
 }

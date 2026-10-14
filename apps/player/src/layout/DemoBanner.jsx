@@ -7,7 +7,7 @@ export function DemoBanner() {
   const reset = async () => (await import('../services/mock/store.js')).resetMock();
   return (
     <div className={s.demo}>
-      Mode démo : argent fictif, code SMS 123456.
+      Démo · argent fictif
       <button type="button" onClick={reset}>Réinitialiser</button>
     </div>
   );

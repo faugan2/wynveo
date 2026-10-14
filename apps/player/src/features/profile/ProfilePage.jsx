@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { formatPhone, initials, KYC_LABEL } from '@wynveo/core';
+import { formatPhone, initials, KYC_LABEL, PHONE_LABEL } from '@wynveo/core';
 import { Avatar, Button, Card, Icon, ListRow, Pill } from '../../ui/index.js';
 import { useSession } from '../../hooks/SessionProvider.jsx';
 import { useCopy } from '../../hooks/useCopy.js';
@@ -18,7 +18,10 @@ export function ProfilePage() {
         <div style={{ minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>{profile.fullName}</div>
           <div style={{ fontSize: '0.8rem', color: 'var(--fg-dim)', marginBottom: 4 }}>{formatPhone(profile.phone)}</div>
-          <Pill tone={KYC_TONE[profile.kycStatus]}>{KYC_LABEL[profile.kycStatus]}</Pill>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <Pill tone={profile.phoneVerified ? 'good' : 'warn'}>{PHONE_LABEL[profile.phoneVerified]}</Pill>
+            <Pill tone={KYC_TONE[profile.kycStatus]}>{KYC_LABEL[profile.kycStatus]}</Pill>
+          </div>
         </div>
       </Card>
 

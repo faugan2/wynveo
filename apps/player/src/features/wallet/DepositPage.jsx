@@ -37,11 +37,21 @@ function DepositForm({ flow }) {
         label={`Numéro ${OPERATORS[flow.operator].name.split(' ')[0]}`} prefix="+228" inputMode="tel" placeholder="90 12 34 56"
         value={flow.msisdn} onChange={(e) => flow.setMsisdn(e.target.value)} error={flow.errors.msisdn}
       />
+      {flow.verifiesNumber && (
+        <Notice icon="check">Ce dépôt confirme aussi que ce numéro est à vous : il débloque les retraits{flow.bonusEligible ? ' et le bonus de bienvenue' : ''}.</Notice>
+      )}
+      {!flow.fromOwnNumber && !flow.errors.msisdn && (!flow.phoneVerified || flow.bonusStillAvailable) && flow.msisdn.replace(/\D/g, '').length >= 8 && (
+        <Notice tone="warn" icon="info">
+          Ce n'est pas le numéro de votre compte ({maskPhone(flow.ownNumber)}). Le dépôt sera crédité, mais
+          {flow.phoneVerified ? ' sans bonus de bienvenue.' : ' il ne confirmera pas votre numéro et ne donnera pas le bonus.'}{' '}
+          <Button variant="link" onClick={flow.useOwnNumber}>Utiliser mon numéro</Button>
+        </Notice>
+      )}
 
       <Card style={{ padding: '6px 14px' }}>
         <KeyValueList rows={[
           { label: 'Frais', value: 'Gratuit', tone: 'good' },
-          flow.isFirstDeposit && { label: `Bonus de bienvenue ${flow.bonusRule.rate * 100} %`, value: `+${formatFCFA(flow.bonusPreview)}`, tone: 'gold' },
+          flow.bonusEligible && { label: `Bonus de bienvenue ${flow.bonusRule.rate * 100} %`, value: `+${formatFCFA(flow.bonusPreview)}`, tone: 'gold' },
         ]} />
       </Card>
 
@@ -74,7 +84,7 @@ function AwaitingConfirmation({ flow }) {
       </Card>
       {flow.canConfirmManually && (
         <>
-          <Notice tone="warn" icon="info">Paiement simulé : aucun SMS n'est envoyé. Utilisez le bouton ci-dessous pour jouer le rôle de l'opérateur.</Notice>
+          <Notice tone="warn" icon="info">Paiement simulé : aucune demande n'est envoyée à l'opérateur. Utilisez le bouton ci-dessous pour jouer le rôle du téléphone.</Notice>
           {flow.confirmError && <Notice tone="error">{flow.confirmError}</Notice>}
           <Button block onClick={flow.confirmOnPhone} loading={flow.confirming}>Simuler la confirmation</Button>
         </>
@@ -95,6 +105,9 @@ function DepositSuccess({ flow }) {
         <Money value={flow.tx?.amount} size={40} tone="positive" signed />
         {flow.bonus > 0 && <p style={{ color: 'var(--gold)', fontWeight: 700 }}>+ {formatFCFA(flow.bonus)} de bonus de bienvenue</p>}
       </div>
+      {flow.numberJustVerified && (
+        <Notice icon="check">Votre numéro est confirmé : les retraits sont débloqués.</Notice>
+      )}
       <Card style={{ padding: '6px 14px' }}>
         <KeyValueList rows={[
           { label: 'Référence', value: flow.reference },

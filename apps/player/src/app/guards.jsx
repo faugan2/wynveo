@@ -1,8 +1,8 @@
 /**
  * Aiguillage selon l'état de la session :
- *  - visiteur          -> écrans d'accès uniquement
+ *  - visiteur            -> écrans d'accès uniquement
  *  - inscription à finir -> écran "Inscription"
- *  - joueur prêt       -> application
+ *  - joueur prêt         -> application
  */
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSession } from '../hooks/SessionProvider.jsx';
@@ -27,10 +27,10 @@ export function GuestOnly() {
   return <Outlet />;
 }
 
-export function RequireNewPlayer() {
+/** Inscription : ouverte aux visiteurs et aux comptes dont le profil n'est pas encore créé. */
+export function SignupGate() {
   const { status } = useSession();
   if (status === 'loading') return <SplashScreen />;
-  if (status === 'guest') return <Navigate to={ROUTES.welcome} replace />;
   if (status === 'ready') return <Navigate to={ROUTES.home} replace />;
   return <Outlet />;
 }

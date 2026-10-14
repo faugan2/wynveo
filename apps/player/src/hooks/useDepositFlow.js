@@ -7,7 +7,7 @@
 import { useEffect, useState } from 'react';
 import {
   DEPOSIT_LIMITS, validateDepositAmount, normalizeTogoPhone, guessOperator, localDigits, computeWelcomeBonus,
-  TX_STATUS, WELCOME_BONUS,
+  isWelcomeBonusEligible, TX_STATUS, WELCOME_BONUS,
 } from '@wynveo/core';
 import { walletService } from '../services/index.js';
 import { useSession } from './SessionProvider.jsx';
@@ -20,7 +20,7 @@ export function useDepositFlow() {
   const [amount, setAmount] = useState(5000);
   const [msisdn, setMsisdn] = useState(() => localDigits(profile?.phone));
   const [touched, setTouched] = useState(false);
-  const [pending, setPending] = useState(null); // { txId, reference, allowsManualConfirmation, firstDeposit }
+  const [pending, setPending] = useState(null); // { txId, reference, allowsManualConfirmation, bonusExpected, verifies }
   const [tx, setTx] = useState(null);
   const [bonus, setBonus] = useState(0);
 
@@ -30,8 +30,11 @@ export function useDepositFlow() {
 
   const amountCheck = validateDepositAmount(amount);
   const phoneCheck = normalizeTogoPhone(msisdn);
-  const isFirstDeposit = (wallet?.depositCount ?? 0) === 0;
-  const bonusPreview = computeWelcomeBonus(amountCheck.ok ? amount : 0, isFirstDeposit).amount;
+  // Seul un dépôt depuis le numéro du compte vérifie ce numéro et donne droit au bonus.
+  const fromOwnNumber = phoneCheck.ok && phoneCheck.e164 === profile?.phone;
+  const bonusEligible = isWelcomeBonusEligible(wallet, { fromOwnNumber });
+  const bonusPreview = computeWelcomeBonus(amountCheck.ok ? amount : 0, bonusEligible).amount;
+  const verifiesNumber = fromOwnNumber && !profile?.phoneVerified;
 
   // Suit l'opération pour réagir à la confirmation de l'opérateur (webhook en production).
   useEffect(() => {
@@ -48,7 +51,7 @@ export function useDepositFlow() {
     if (!amountCheck.ok || !phoneCheck.ok) return;
     const res = await create.run({ amount, operator, msisdn: phoneCheck.e164 });
     if (!res) return;
-    setPending({ ...res, firstDeposit: isFirstDeposit });
+    setPending({ ...res, bonusExpected: bonusEligible, verifies: verifiesNumber });
     setStep(res.status === TX_STATUS.SUCCESS ? 'success' : res.status === TX_STATUS.FAILED ? 'failed' : 'awaiting');
   }
 
@@ -75,8 +78,15 @@ export function useDepositFlow() {
       amount: touched && !amountCheck.ok ? amountCheck.message : null,
       msisdn: touched && !phoneCheck.ok ? phoneCheck.message : null,
     },
-    isFirstDeposit,
+    fromOwnNumber,
+    bonusEligible,
     bonusPreview,
+    verifiesNumber,
+    phoneVerified: Boolean(profile?.phoneVerified),
+    bonusStillAvailable: !wallet?.welcomeBonusGranted,
+    ownNumber: profile?.phone,
+    useOwnNumber: () => setMsisdn(localDigits(profile?.phone)),
+    numberJustVerified: Boolean(pending?.verifies) && tx?.status === TX_STATUS.SUCCESS,
     bonusRule: WELCOME_BONUS,
     submit, submitting: create.pending, submitError: create.error,
     reference: pending?.reference,
@@ -84,7 +94,7 @@ export function useDepositFlow() {
     confirmOnPhone, confirming: confirm.pending, confirmError: confirm.error,
     abandon, abandoning: cancel.pending,
     tx,
-    bonus: bonus || (pending?.firstDeposit && tx?.status === TX_STATUS.SUCCESS ? computeWelcomeBonus(tx.amount, true).amount : 0),
+    bonus: bonus || (pending?.bonusExpected && tx?.status === TX_STATUS.SUCCESS ? computeWelcomeBonus(tx.amount, true).amount : 0),
     newBalance: tx?.balanceAfter ?? null,
     restart,
   };

@@ -2,7 +2,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { db, FieldValue } from '../lib/firebase.js';
 import { assertRule, badRequest } from '../lib/guards.js';
 import { getPaymentProvider } from '../payments/index.js';
-import { walletRef, txRef, newTxRef, walletFromDoc, walletUpdate, newTransaction } from '../repositories/index.js';
+import { userRef, walletRef, txRef, newTxRef, walletFromDoc, walletUpdate, newTransaction } from '../repositories/index.js';
 import { getActivePlayer } from './profileService.js';
 import {
   validateDepositAmount, normalizeTogoPhone, isOperator, applyDeposit, makeReference, REF_PREFIX,
@@ -56,9 +56,16 @@ export async function settleDeposit(txId, outcome) {
       return { status: TX_STATUS.FAILED };
     }
 
-    const wSnap = await t.get(walletRef(tx.uid));
-    const { wallet, bonus } = applyDeposit(walletFromDoc(wSnap), tx.amount);
+    const [wSnap, uSnap] = await Promise.all([t.get(walletRef(tx.uid)), t.get(userRef(tx.uid))]);
+    const user = uSnap.data() ?? {};
+    // Un dépôt confirmé avec le code secret Mobile Money depuis le numéro du compte
+    // prouve que ce numéro appartient au joueur.
+    const fromOwnNumber = Boolean(user.phone) && tx.msisdn === user.phone;
+    const { wallet, bonus } = applyDeposit(walletFromDoc(wSnap), tx.amount, { fromOwnNumber });
     t.set(wSnap.ref, walletUpdate(wallet), { merge: true });
+    if (fromOwnNumber && !user.phoneVerified) {
+      t.update(uSnap.ref, { phoneVerified: true, phoneVerifiedAt: FieldValue.serverTimestamp(), phoneVerifiedBy: { method: 'deposit', txId } });
+    }
     t.update(txSnap.ref, {
       status: TX_STATUS.SUCCESS,
       providerRef: outcome.providerRef ?? tx.providerRef,
@@ -72,7 +79,7 @@ export async function settleDeposit(txId, outcome) {
         label: 'Bonus de bienvenue', wagerRequired: bonus.wagerRequired, relatedTx: txId,
       }));
     }
-    return { status: TX_STATUS.SUCCESS, bonus: bonus.amount, balance: wallet.balance };
+    return { status: TX_STATUS.SUCCESS, bonus: bonus.amount, balance: wallet.balance, phoneVerified: fromOwnNumber || Boolean(user.phoneVerified) };
   });
 }
 

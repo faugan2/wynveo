@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { SessionProvider } from '../hooks/SessionProvider.jsx';
 import { AppShell } from '../layout/AppShell.jsx';
 import { AuthShell } from '../layout/AuthShell.jsx';
-import { RequirePlayer, GuestOnly, RequireNewPlayer } from './guards.jsx';
+import { RequirePlayer, GuestOnly, SignupGate } from './guards.jsx';
 import { ROUTES } from './routes.js';
 
 import { WelcomePage } from '../features/auth/WelcomePage.jsx';
@@ -30,7 +30,7 @@ export function App() {
             </Route>
           </Route>
 
-          <Route element={<RequireNewPlayer />}>
+          <Route element={<SignupGate />}>
             <Route element={<AuthShell />}>
               <Route path={ROUTES.register} element={<RegisterPage />} />
             </Route>

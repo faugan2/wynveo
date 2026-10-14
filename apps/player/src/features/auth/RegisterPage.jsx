@@ -1,28 +1,43 @@
-import { Button, Checkbox, Notice, TextField } from '../../ui/index.js';
+import { Link } from 'react-router-dom';
+import { PASSWORD_MIN_LENGTH } from '@wynveo/core';
+import { Button, Checkbox, Notice, PasswordField, TextField } from '../../ui/index.js';
 import { PageHeader } from '../../layout/PageHeader.jsx';
-import { useCompleteProfile } from '../../hooks/useCompleteProfile.js';
+import { useRegister } from '../../hooks/useRegister.js';
 import { useSession } from '../../hooks/SessionProvider.jsx';
-import { formatPhone } from '@wynveo/core';
+import { ROUTES } from '../../app/routes.js';
 import s from './auth.module.css';
 
-/** Dernière étape de l'inscription, après la vérification du numéro. */
 export function RegisterPage() {
-  const { user, signOut } = useSession();
-  const form = useCompleteProfile();
-
+  const form = useRegister();
+  const { signOut } = useSession();
   return (
     <>
-      <PageHeader title="Inscription" backTo={null} />
+      <PageHeader title="Inscription" backTo={form.hasAccount ? null : ROUTES.welcome} />
       <form className={s.form} onSubmit={(e) => { e.preventDefault(); form.submit(); }} noValidate>
-        <div>
-          <div className={s.stepLabel}>ÉTAPE 3 SUR 3</div>
-          <div className={s.progress}><i style={{ width: '100%' }} /></div>
-        </div>
-        <p className={s.intro}>Numéro vérifié : <b style={{ color: '#fff' }}>{formatPhone(user?.phone)}</b>. Il ne reste que votre nom.</p>
+        {form.hasAccount ? (
+          <p className={s.intro}>Compte créé pour le <b style={{ color: '#fff' }}>{form.accountPhone}</b>. Il ne reste que quelques informations.</p>
+        ) : (
+          <p className={s.intro}>Un seul compte pour les Jeux et le Sport.</p>
+        )}
+
         <TextField
           label="Nom complet" autoComplete="name" placeholder="Ex : Kossi Amouzou"
           value={form.fullName} onChange={(e) => form.setFullName(e.target.value)} error={form.errors.fullName} autoFocus
         />
+        {!form.hasAccount && (
+          <>
+            <TextField
+              label="Numéro de téléphone" prefix="🇹🇬 +228" inputMode="tel" autoComplete="username" placeholder="90 12 34 56"
+              value={form.phone} onChange={(e) => form.setPhone(e.target.value)} error={form.errors.phone}
+              hint="Utilisez votre numéro T-Money ou Flooz : vos retraits y seront envoyés."
+            />
+            <PasswordField
+              label="Mot de passe" autoComplete="new-password"
+              value={form.password} onChange={(e) => form.setPassword(e.target.value)} error={form.errors.password}
+              hint={`Au moins ${PASSWORD_MIN_LENGTH} caractères, avec des lettres et des chiffres.`}
+            />
+          </>
+        )}
         <TextField
           label="Code parrain" optional placeholder="Ex : KOSSI228" autoCapitalize="characters"
           value={form.referralCode} onChange={(e) => form.setReferralCode(e.target.value)} error={form.errors.referralCode}
@@ -32,7 +47,9 @@ export function RegisterPage() {
         </Checkbox>
         {form.error && <Notice tone="error">{form.error}</Notice>}
         <Button type="submit" block loading={form.pending}>Créer mon compte</Button>
-        <Button variant="link" onClick={signOut}>Ce n'est pas mon numéro</Button>
+        {form.hasAccount
+          ? <Button variant="link" onClick={signOut}>Utiliser un autre numéro</Button>
+          : <p className={s.footer}>Déjà un compte ? <Link to={ROUTES.login}><b>Se connecter</b></Link></p>}
       </form>
     </>
   );

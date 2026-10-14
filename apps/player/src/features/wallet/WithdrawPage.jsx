@@ -5,6 +5,7 @@ import { PageHeader } from '../../layout/PageHeader.jsx';
 import { useWithdrawalForm } from '../../hooks/useWithdrawalForm.js';
 import { ROUTES } from '../../app/routes.js';
 import { OperatorPicker } from './components/OperatorPicker.jsx';
+import { VerifyNumberCard } from './components/VerifyNumberCard.jsx';
 
 const OUTCOME = {
   paid: { icon: 'check', color: 'var(--green)', title: 'Retrait envoyé', text: "L'argent arrive sur votre téléphone dans quelques minutes." },
@@ -16,6 +17,17 @@ const OUTCOME = {
 export function WithdrawPage() {
   const form = useWithdrawalForm();
   if (form.outcome) return <WithdrawResult form={form} />;
+  if (!form.phoneVerified) {
+    return (
+      <>
+        <PageHeader title="Retrait" backTo={ROUTES.wallet} />
+        <VerifyNumberCard phone={form.phone} />
+        <p style={{ fontSize: '0.82rem', color: 'var(--fg-dim)' }}>
+          Les retraits sont envoyés uniquement sur le numéro de votre compte. Nous devons donc d'abord vérifier qu'il vous appartient.
+        </p>
+      </>
+    );
+  }
 
   const quick = [...form.limits.quickAmounts.map((v) => ({ value: v, label: formatAmount(v) }))];
   return (

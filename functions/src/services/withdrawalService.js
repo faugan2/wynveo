@@ -23,7 +23,7 @@ export async function requestWithdrawal(uid, input) {
     const user = await getActivePlayer(uid, t);
     const wSnap = await t.get(walletRef(uid));
     const wallet = walletFromDoc(wSnap);
-    assertRule(validateWithdrawal({ amount, wallet, kycStatus: user.kycStatus, today }));
+    assertRule(validateWithdrawal({ amount, wallet, kycStatus: user.kycStatus, today, phoneVerified: user.phoneVerified }));
 
     const mode = withdrawalReviewMode({ amount, kycStatus: user.kycStatus });
     const next = applyWithdrawalHold(wallet, amount, today);

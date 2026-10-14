@@ -7,11 +7,11 @@ React (JavaScript) + Vite, Firebase en syntaxe v8 (modules `compat`), Cloud Func
 
 | Livré | Détail |
 |---|---|
-| Connexion par SMS | Numéro togolais + code à 6 chiffres (Firebase Phone Auth) |
-| Inscription | Nom, code parrain facultatif, confirmation 18 ans ou plus |
+| Inscription / connexion | Numéro togolais + mot de passe, **sans SMS** (gratuit) ; un numéro = un compte |
+| Vérification du numéro | Par le **premier dépôt Mobile Money fait depuis ce numéro** (confirmé avec le code secret de l'opérateur) ; débloque les retraits et le bonus |
 | Portefeuille partagé Jeux + Sport | Solde réel, bonus, solde retirable, mis à jour en direct |
-| Dépôt | T-Money / Flooz, **paiement simulé**, bonus de bienvenue 100 % jusqu'à 10 000 FCFA au 1er dépôt |
-| Retrait | Vers le numéro du compte uniquement, plafond 50 000 FCFA/jour sans vérification d'identité, validation automatique ou manuelle |
+| Dépôt | T-Money / Flooz, **paiement simulé**, bonus de bienvenue 100 % jusqu'à 10 000 FCFA sur le 1er dépôt depuis le numéro du compte |
+| Retrait | Numéro vérifié obligatoire, envoi vers le numéro du compte uniquement, plafond 50 000 FCFA/jour sans vérification d'identité, validation automatique ou manuelle |
 | Historique | Filtres Tout / Dépôts / Retraits / Jeux / Sport |
 | Accueil | Choix **Jeux** ou **Sport** (les deux modules arrivent aux étapes 2 et 3) |
 | Admin | Connexion e-mail + rôle, tableau de bord, retraits à valider (approuver / refuser avec motif), journal d'audit |
@@ -34,7 +34,7 @@ wynveo/
 │  └─ src/
 │     ├─ config/         Initialisation Firebase (votre fichier, adapté)
 │     ├─ services/       SEUL accès aux données ; deux versions : firebase/ et mock/ (démo hors ligne)
-│     ├─ hooks/          Logique d'écran (session, connexion SMS, dépôt, retrait…)
+│     ├─ hooks/          Logique d'écran (session, connexion, inscription, dépôt, retrait…)
 │     ├─ features/       Écrans par domaine : auth, home, wallet, games, sport, bets, profile
 │     ├─ ui/             Composants visuels purs (Button, Card, OtpInput…) : aucune logique
 │     ├─ layout/         Cadres d'écran (barre du haut, onglets)
@@ -61,7 +61,7 @@ cd functions && npm test       # parcours dépôt / retrait / validation admin
 
 ### Démo hors ligne (sans Firebase)
 ```bash
-npm run dev:mock -w @wynveo/player   # http://localhost:5173  · code SMS : 123456
+npm run dev:mock -w @wynveo/player   # http://localhost:5173  · créez un compte avec n'importe quel numéro togolais
 npm run dev:mock -w @wynveo/admin    # http://localhost:5174  · admin@wynveo.com / demo1234
 ```
 
@@ -72,7 +72,6 @@ cp apps/admin/.env.example apps/admin/.env     # idem
 npm run emulators                              # http://localhost:4000 pour l'interface
 npm run dev:player
 ```
-Avec l'émulateur, le code SMS s'affiche dans le terminal des émulateurs.
 
 Créer un admin sur l'émulateur :
 ```bash
@@ -84,7 +83,7 @@ FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GCLOUD_PROJECT=demo-wynveo \
 
 1. **Console Firebase** du projet `my-streakers` :
    - passer au forfait **Blaze** ;
-   - **Authentication** → activer **Téléphone** et **E-mail/Mot de passe** ; ajouter des **numéros de test** (ex. +228 90 00 00 01 → 123456) ;
+   - **Authentication → Méthodes de connexion** → activer **E-mail/Mot de passe** (sert aux joueurs, via une adresse technique `22890123456@joueurs.wynveo.app`, et aux admins) ;
    - **Authentication → Paramètres → Domaines autorisés** : ajouter les domaines des deux sites ;
    - **Firestore** : créer la base (région `europe-west1` conseillée, comme les Functions).
 2. Déployer :
@@ -101,6 +100,14 @@ FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GCLOUD_PROJECT=demo-wynveo \
      node functions/scripts/set-admin.mjs vous@domaine.com super "MotDePasseSolide"
    ```
    Ne jamais commiter `service-account.json`.
+
+## Comment le numéro d'un joueur est vérifié
+
+Il n'y a pas de SMS. À l'inscription, le numéro est « à confirmer ». Le premier dépôt réussi **fait depuis ce numéro**
+est validé par le joueur avec son code secret T-Money / Flooz : cela prouve qu'il possède la carte SIM.
+Ce dépôt passe le profil en `phoneVerified: true` (côté serveur uniquement) et accorde le bonus de bienvenue.
+Un dépôt depuis un autre numéro est crédité, mais ne vérifie rien et ne donne pas de bonus.
+Mot de passe oublié : réinitialisation par le support (un écran admin est prévu ; un SMS pourra être ajouté plus tard).
 
 ## Brancher un vrai prestataire de paiement
 
