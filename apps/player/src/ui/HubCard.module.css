@@ -1,0 +1,16 @@
+.card {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
+  min-height: 160px; padding: 18px; border-radius: var(--radius-l);
+  color: #fff; box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 14px 30px #000a; }
+.games { background: linear-gradient(135deg, #8b3dff, #4c1d95); }
+.sport { background: linear-gradient(135deg, #14b8a6, #065f5b); }
+
+.art { position: absolute; right: 12px; top: 10px; font-size: 64px; line-height: 1; filter: drop-shadow(0 6px 10px #0008); }
+.title { font-family: var(--font-display); font-weight: 800; font-size: 2.3rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.03em; }
+.text { font-size: 0.85rem; padding-right: 48px; opacity: 0.95; }
+.go { position: absolute; right: 14px; bottom: 14px; width: 38px; height: 38px; border-radius: 50%; background: #ffffff2a; display: grid; place-items: center; }
+.badge { align-self: flex-start; margin-bottom: auto; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.06em; background: #0005; padding: 3px 8px; border-radius: 99px; }

@@ -1,0 +1,47 @@
+/* ChipGroup */
+.chips { display: grid; grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)); gap: 6px; }
+.chip {
+  min-height: 38px; padding: 6px 4px;
+  background: var(--field); border: 1px solid var(--line-soft); border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; font-variant-numeric: tabular-nums;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.chip:hover { border-color: var(--line); }
+.chipOn { border-color: var(--gold); color: var(--gold); }
+
+/* SegmentedControl */
+.seg { display: flex; padding: 3px; background: var(--field); border: 1px solid var(--line-soft); border-radius: 10px; }
+.segItem {
+  flex: 1; min-width: 0; padding: 8px 4px; border: 0; border-radius: 7px; background: none;
+  font-size: 0.82rem; font-weight: 700; color: var(--fg-muted); white-space: nowrap;
+}
+.segOn { background: #2a2470; color: #fff; }
+
+/* RadioCard */
+.radio {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 10px 12px; text-align: left;
+  background: var(--field); border: 1px solid var(--line-soft); border-radius: 10px;
+  font-weight: 700;
+}
+.radioOn { border-color: var(--gold); background: #2a2060; }
+.radioText { flex: 1; min-width: 0; }
+.radioText small { display: block; font-size: 0.75rem; font-weight: 500; color: var(--fg-dim); }
+.dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line); flex: none; }
+.radioOn .dot { border: 6px solid var(--gold); }
+.badge {
+  width: 36px; height: 36px; border-radius: 8px; flex: none;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 0.8rem;
+}
+
+/* Checkbox */
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 0.85rem; color: var(--fg-muted); cursor: pointer; }
+.check input { position: absolute; opacity: 0; pointer-events: none; }
+.box {
+  width: 22px; height: 22px; flex: none; border-radius: 6px;
+  border: 2px solid var(--line); display: grid; place-items: center; color: #fff;
+}
+.check input:checked + .box { background: var(--green); border-color: var(--green); }
+.check input:focus-visible + .box { outline: 2px solid var(--focus); outline-offset: 2px; }
+.checkError .box { border-color: var(--red); }

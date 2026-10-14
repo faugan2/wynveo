@@ -1,0 +1,13 @@
+{
+  "projects": {
+    "default": "my-streakers"
+  },
+  "targets": {
+    "my-streakers": {
+      "hosting": {
+        "player": ["my-streakers"],
+        "admin": ["my-streakers-admin"]
+      }
+    }
+  }
+}

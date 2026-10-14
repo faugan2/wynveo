@@ -1,0 +1,19 @@
+{
+  "name": "wynveo-functions",
+  "private": true,
+  "description": "Cloud Functions de Wynveo : tout ce qui touche à l'argent passe ici.",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "sync-core": "node scripts/sync-core.mjs",
+    "set-admin": "node scripts/set-admin.mjs",
+    "test": "node --test --experimental-test-module-mocks"
+  },
+  "dependencies": {
+    "firebase-admin": "12.7.0",
+    "firebase-functions": "6.1.0"
+  }
+}

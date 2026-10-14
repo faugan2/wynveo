@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// Principe : le navigateur ne peut JAMAIS écrire de l'argent.
+// Toutes les écritures sur users, wallets et transactions passent par les Cloud Functions
+// (le SDK Admin ignore ces règles). Le joueur ne fait que lire ses propres données.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isSelf(uid) { return signedIn() && request.auth.uid == uid; }
+    function role() { return signedIn() ? request.auth.token.get('role', null) : null; }
+    function isStaff() { return role() in ['super', 'finance', 'support', 'trader']; }
+    function isFinance() { return role() in ['super', 'finance']; }
+
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isStaff();
+      allow write: if false;
+    }
+
+    match /wallets/{uid} {
+      allow read: if isSelf(uid) || isFinance() || role() == 'support';
+      allow write: if false;
+    }
+
+    match /transactions/{txId} {
+      allow read: if (signedIn() && resource.data.uid == request.auth.uid) || isFinance() || role() == 'support';
+      allow write: if false;
+    }
+
+    match /adminLogs/{id} {
+      allow read: if role() == 'super';
+      allow write: if false;
+    }
+
+    match /referralCodes/{code} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,13 @@
+.card {
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+  padding: 14px;
+  min-width: 0;
+}
+.flush { padding: 2px 14px; }
+.glow { border-color: #7c4dff; box-shadow: 0 0 22px #7c3aed40; }
+.gold { border-color: var(--gold-2); }
+.hero { background: linear-gradient(135deg, #4c1d95, #1e1b4b); border-color: #7c4dff; padding: 18px; }
+.success { background: linear-gradient(180deg, #0f3a24, var(--panel)); border-color: var(--green); }
+.teal { background: linear-gradient(135deg, #0f3d3a, var(--panel)); border-color: #2dd4bf55; }

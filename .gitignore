@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+.firebase/
+# copie générée de packages/core pour le déploiement des Cloud Functions
+functions/src/core/
+# exports des émulateurs
+emulator-data/

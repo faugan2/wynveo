@@ -1,0 +1,14 @@
+{
+  "name": "@wynveo/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Logique métier pure de Wynveo, partagée par les applications et les Cloud Functions. Aucune dépendance.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

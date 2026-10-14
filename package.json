@@ -1,0 +1,19 @@
+{
+  "name": "wynveo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Wynveo : jeux et paris sportifs, un seul compte",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:player": "npm run dev -w @wynveo/player",
+    "dev:admin": "npm run dev -w @wynveo/admin",
+    "build": "npm run build -w @wynveo/player && npm run build -w @wynveo/admin",
+    "test": "npm test -w @wynveo/core",
+    "sync-core": "node functions/scripts/sync-core.mjs",
+    "emulators": "npm run sync-core && firebase emulators:start --project demo-wynveo",
+    "deploy": "npm run sync-core && firebase deploy"
+  }
+}

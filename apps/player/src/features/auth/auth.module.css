@@ -1,0 +1,26 @@
+.welcome { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; padding-top: 8px; }
+.center { text-align: center; }
+.previews { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.preview { position: relative; min-height: 150px; border-radius: var(--radius-l); padding: 14px; display: flex; flex-direction: column; justify-content: flex-end; box-shadow: var(--shadow); overflow: hidden; }
+.preview b { font-family: var(--font-display); font-weight: 800; font-size: 1.8rem; text-transform: uppercase; line-height: 1; }
+.preview small { font-size: 0.75rem; opacity: 0.9; }
+.games { background: linear-gradient(150deg, #8b3dff, #4c1d95); }
+.sport { background: linear-gradient(150deg, #14b8a6, #065f5b); }
+.art { position: absolute; top: 10px; right: 10px; font-size: 48px; filter: drop-shadow(0 6px 10px #0008); }
+.headline { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 7vw, 2.2rem); line-height: 1.05; text-transform: uppercase; }
+.lead { margin-top: 10px; color: var(--fg-muted); font-size: 0.92rem; }
+.actions { display: flex; flex-direction: column; gap: 10px; }
+.legal { text-align: center; font-size: 0.75rem; color: var(--fg-dim); }
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+.intro { color: var(--fg-muted); font-size: 0.92rem; }
+.stepLabel { font-size: 0.72rem; font-weight: 700; color: var(--fg-muted); letter-spacing: 0.06em; }
+.progress { height: 6px; border-radius: 9px; background: var(--field); overflow: hidden; margin-top: 6px; }
+.progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--green), #86efac); }
+.codeHead { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 4px; }
+.codeIcon { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: #2f7cf622; color: var(--blue-text); }
+.codeTitle { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; text-transform: uppercase; }
+.resend { text-align: center; font-size: 0.85rem; color: var(--fg-muted); }
+.resend b { color: var(--gold); }
+.footer { text-align: center; font-size: 0.85rem; color: var(--fg-muted); margin-top: auto; }
+.error { text-align: center; color: var(--red-text); font-size: 0.85rem; font-weight: 600; }

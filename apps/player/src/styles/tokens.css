@@ -1,0 +1,48 @@
+/* Identité visuelle Wynveo : univers casino nocturne, violet profond et or.
+   Jeux = violet, Sport = sarcelle, argent = vert, alertes = ambre/rouge. */
+:root {
+  color-scheme: dark;
+
+  --bg: #0b0a1f;
+  --bg-elev: #110f2b;
+  --panel: #15123a;
+  --panel-2: #1c1748;
+  --field: #0d0b26;
+  --line: #3a2f8a;
+  --line-soft: #2a2468;
+
+  --fg: #ffffff;
+  --fg-muted: #b9b3e6;
+  --fg-dim: #8b84c4;
+
+  --gold: #ffc83a;
+  --gold-2: #f59e0b;
+  --green: #22b14c;
+  --green-2: #138a35;
+  --green-text: #4ade80;
+  --purple: #7c3aed;
+  --purple-2: #5b21b6;
+  --teal: #14b8a6;
+  --teal-2: #0f766e;
+  --teal-text: #5eead4;
+  --blue: #2f7cf6;
+  --blue-2: #1d4fd1;
+  --blue-text: #93b8ff;
+  --orange: #f59e0b;
+  --orange-2: #ea6a0c;
+  --red: #ef4459;
+  --red-text: #ff8a9a;
+  --focus: #7aa2ff;
+
+  --font-display: 'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+  --font-body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 18px;
+  --shadow: 0 10px 26px #0007;
+
+  --gutter: 16px;
+  --content-max: 560px;
+  --topbar-h: 58px;
+}
