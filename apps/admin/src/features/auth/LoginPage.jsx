@@ -17,8 +17,8 @@ export function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: '100%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
-      <div style={{ background: 'radial-gradient(600px 400px at 20% 20%, #3b1a8a, #16133a)', color: '#fff', padding: 48, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 32 }}>
+    <div className="login">
+      <div className="login-hero">
         <div><Brand size={32} /> <span style={{ marginLeft: 8, fontSize: 13, letterSpacing: '0.1em', color: '#b9b3e6', fontWeight: 700 }}>ADMINISTRATION</span></div>
         <div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 44, lineHeight: 1, textTransform: 'uppercase' }}>Pilotez Jeux et Sport depuis un seul espace</h1>
@@ -26,8 +26,9 @@ export function LoginPage() {
         </div>
         <div style={{ color: '#7d76b8', fontSize: 12 }}>Accès réservé au personnel autorisé.</div>
       </div>
-      <div style={{ display: 'grid', placeItems: 'center', padding: 24 }}>
+      <div className="login-side">
         <form className="card" style={{ width: '100%', maxWidth: 400, padding: 30, display: 'flex', flexDirection: 'column', gap: 16 }} onSubmit={submit}>
+          <div className="login-mobile-brand"><Brand /> <span style={{ marginLeft: 6, fontSize: 11, letterSpacing: '0.1em', color: '#b9b3e6', fontWeight: 700 }}>ADMINISTRATION</span></div>
           <h2 style={{ fontSize: 24, fontWeight: 800 }}>Connexion</h2>
           <div><label className="label" htmlFor="email">Adresse e-mail</label><input id="email" className="input" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
           <div><label className="label" htmlFor="password">Mot de passe</label><input id="password" className="input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
