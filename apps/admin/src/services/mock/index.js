@@ -63,3 +63,16 @@ export { sportAdminService } from './sport.js';
 export { userAdminService } from './users.js';
 export { reportsService } from './reports.js';
 export { promotionService } from './promotions.js';
+
+// Admin management and audit services
+import * as adminMgmt from './admins.js';
+import * as auditMgmt from './audit.js';
+
+export const adminService = {
+  listAdmins: adminMgmt.listAdmins,
+  createAdmin: adminMgmt.createAdmin,
+  deleteAdmin: adminMgmt.deleteAdmin,
+  updateAdminRole: adminMgmt.updateAdminRole,
+  getAuditLogs: auditMgmt.getAuditLogs,
+  getAuditStats: auditMgmt.getAuditStats,
+};

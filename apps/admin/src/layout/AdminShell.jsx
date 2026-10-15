@@ -14,9 +14,11 @@ const MENU = [
   { to: '/kyc', label: 'Vérifications KYC' },
   { to: '/rapports', label: 'Rapports & Analytics' },
   { to: '/promotions', label: 'Promotions' },
+  { to: '/admins', label: 'Administrateurs' },
+  { to: '/audit', label: 'Audit & Logs' },
   { to: '/matchs', label: 'Matchs & cotes' },
   { group: 'BIENTÔT' },
-  { label: 'Jeux' }, { label: 'Admins & audit' },
+  { label: 'Jeux' },
 ];
 
 /** Cadre du back-office : menu latéral sur ordinateur, barre horizontale sur mobile (voir admin.css). */

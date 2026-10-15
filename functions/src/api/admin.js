@@ -89,3 +89,37 @@ export const adminGetPromoStats = onCall(async (request) => {
   requireRole(request, ['super', 'finance']);
   return getPromoStats();
 });
+
+/** Admins et Audit. */
+import { listAdmins, createAdmin, deleteAdmin, updateAdminRole } from '../services/adminService.js';
+import { logAuditAction, getAuditLogs, getAuditStats } from '../services/auditService.js';
+
+export const adminListAdmins = onCall(async (request) => {
+  requireRole(request, ['super']);
+  return listAdmins();
+});
+
+export const adminCreateAdmin = onCall(async (request) => {
+  const admin = requireRole(request, ['super']);
+  return createAdmin(admin, request.data);
+});
+
+export const adminDeleteAdmin = onCall(async (request) => {
+  const admin = requireRole(request, ['super']);
+  return deleteAdmin(admin, request.data.adminId);
+});
+
+export const adminUpdateAdminRole = onCall(async (request) => {
+  const admin = requireRole(request, ['super']);
+  return updateAdminRole(admin, request.data.adminId, request.data.newRole);
+});
+
+export const adminGetAuditLogs = onCall(async (request) => {
+  requireRole(request, ['super']);
+  return getAuditLogs(request.data);
+});
+
+export const adminGetAuditStats = onCall(async (request) => {
+  requireRole(request, ['super']);
+  return getAuditStats();
+});

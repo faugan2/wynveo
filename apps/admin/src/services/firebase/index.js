@@ -89,3 +89,4 @@ export { userAdminService } from './userAdminService.js';
 export { sportAdminService } from './sportAdminService.js';
 export { reportsService } from './reportsService.js';
 export { promotionService } from './promotionService.js';
+export { adminService } from './adminService.js';

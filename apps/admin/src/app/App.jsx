@@ -9,6 +9,8 @@ import { TransactionsPage } from '../features/transactions/TransactionsPage.jsx'
 import { KYCPage } from '../features/kyc/KYCPage.jsx';
 import { ReportsPage } from '../features/reports/ReportsPage.jsx';
 import { PromotionsPage } from '../features/promotions/PromotionsPage.jsx';
+import { AdminsPage } from '../features/admins/AdminsPage.jsx';
+import { AuditPage } from '../features/audit/AuditPage.jsx';
 import { WithdrawalsPage } from '../features/withdrawals/WithdrawalsPage.jsx';
 import { SportEventsPage } from '../features/sport/SportEventsPage.jsx';
 
@@ -26,6 +28,8 @@ function Gate() {
         <Route path="kyc" element={<KYCPage />} />
         <Route path="rapports" element={<ReportsPage />} />
         <Route path="promotions" element={<PromotionsPage />} />
+        <Route path="admins" element={<AdminsPage />} />
+        <Route path="audit" element={<AuditPage />} />
         <Route path="retraits" element={<WithdrawalsPage />} />
         <Route path="matchs" element={<SportEventsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
