@@ -11,6 +11,7 @@ import { ReportsPage } from '../features/reports/ReportsPage.jsx';
 import { PromotionsPage } from '../features/promotions/PromotionsPage.jsx';
 import { AdminsPage } from '../features/admins/AdminsPage.jsx';
 import { AuditPage } from '../features/audit/AuditPage.jsx';
+import { GamesPage } from '../features/games/GamesPage.jsx';
 import { WithdrawalsPage } from '../features/withdrawals/WithdrawalsPage.jsx';
 import { SportEventsPage } from '../features/sport/SportEventsPage.jsx';
 
@@ -30,6 +31,7 @@ function Gate() {
         <Route path="promotions" element={<PromotionsPage />} />
         <Route path="admins" element={<AdminsPage />} />
         <Route path="audit" element={<AuditPage />} />
+        <Route path="jeux" element={<GamesPage />} />
         <Route path="retraits" element={<WithdrawalsPage />} />
         <Route path="matchs" element={<SportEventsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
