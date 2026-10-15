@@ -109,3 +109,37 @@ export function useUserDetail(uid) {
 
   return { user, transactions, loading, error, KYC_LABEL, STATUS_LABEL };
 }
+
+const TX_TYPE_LABEL = { deposit: 'Dépôt', withdrawal: 'Retrait' };
+const TX_STATUS_LABEL = { success: 'Succès', pending: 'En attente', failed: 'Échouée' };
+
+/** Liste global des transactions avec filtres et recherche. */
+export function useTransactions() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      setError(null);
+      try {
+        const res = await userAdminService.listTransactions({ search, typeFilter, statusFilter, limit: 200 });
+        setItems(res);
+      } catch (err) {
+        setError(err.message);
+      }
+    })();
+  }, [search, typeFilter, statusFilter]);
+
+  return {
+    items: items ?? [],
+    loading: items === null && !error,
+    error,
+    search, setSearch,
+    typeFilter, setTypeFilter,
+    statusFilter, setStatusFilter,
+    TX_TYPE_LABEL, TX_STATUS_LABEL,
+  };
+}

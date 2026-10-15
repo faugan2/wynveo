@@ -9,4 +9,5 @@ export const userAdminService = {
   setSuspended: call('adminSetSuspended'),
   resetPassword: call('adminResetPassword'),
   getUserTransactions: call('adminGetUserTransactions'),
+  listTransactions: call('adminListTransactions'),
 };

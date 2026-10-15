@@ -81,4 +81,44 @@ export const userAdminService = {
     const txs = mockTransactions[uid] || [];
     return txs.slice(0, limit);
   },
+
+  async listTransactions({ typeFilter = null, statusFilter = null, search = '', limit = 100 } = {}) {
+    await delay();
+    // Agréger toutes les transactions
+    let allTxs = [];
+    for (const uid of Object.keys(mockTransactions)) {
+      const user = users.find((u) => u.uid === uid);
+      if (!user) continue;
+      for (const tx of mockTransactions[uid]) {
+        allTxs.push({
+          ...tx,
+          uid,
+          phone: user.phone,
+          fullName: user.fullName,
+        });
+      }
+    }
+
+    // Trier par date décroissante
+    allTxs.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Filtrer
+    if (typeFilter) {
+      allTxs = allTxs.filter((tx) => tx.type === typeFilter);
+    }
+    if (statusFilter) {
+      allTxs = allTxs.filter((tx) => tx.status === statusFilter);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      allTxs = allTxs.filter(
+        (tx) =>
+          tx.phone.includes(q) ||
+          tx.fullName.toLowerCase().includes(q) ||
+          (tx.reference || '').toLowerCase().includes(q)
+      );
+    }
+
+    return allTxs.slice(0, limit);
+  },
 };

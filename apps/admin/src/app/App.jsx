@@ -5,6 +5,7 @@ import { LoginPage } from '../features/auth/LoginPage.jsx';
 import { DashboardPage } from '../features/dashboard/DashboardPage.jsx';
 import { UsersPage } from '../features/users/UsersPage.jsx';
 import { UserDetailPage } from '../features/users/UserDetailPage.jsx';
+import { TransactionsPage } from '../features/transactions/TransactionsPage.jsx';
 import { WithdrawalsPage } from '../features/withdrawals/WithdrawalsPage.jsx';
 import { SportEventsPage } from '../features/sport/SportEventsPage.jsx';
 
@@ -18,6 +19,7 @@ function Gate() {
         <Route index element={<DashboardPage />} />
         <Route path="utilisateurs" element={<UsersPage />} />
         <Route path="utilisateurs/:uid" element={<UserDetailPage />} />
+        <Route path="transactions" element={<TransactionsPage />} />
         <Route path="retraits" element={<WithdrawalsPage />} />
         <Route path="matchs" element={<SportEventsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

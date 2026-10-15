@@ -138,3 +138,54 @@ export async function getUserTransactions(uid, limit = 50) {
     };
   });
 }
+
+/** Liste TOUTES les transactions du système avec filtres et recherche. */
+export async function listTransactions({ typeFilter = null, statusFilter = null, search = '', limit = 100 } = {}) {
+  // Charger d'abord tous les users pour accès rapide aux infos
+  const usersSnap = await db.collection(COL.USERS).get();
+  const usersMap = {};
+  usersSnap.docs.forEach((doc) => {
+    const u = doc.data();
+    usersMap[doc.id] = { uid: doc.id, phone: u.phone || null, fullName: u.fullName || 'Inconnu' };
+  });
+
+  // Récupérer les transactions
+  let query = db.collection(COL.TRANSACTIONS).orderBy('createdAt', 'desc').limit(limit * 2);
+
+  // Note: Firestore ne permet pas de filtrer sur plusieurs fields orderBy sans index
+  // On charge plus et on filtre en mémoire
+  const txSnap = await query.get();
+  const transactions = [];
+
+  for (const doc of txSnap.docs) {
+    const data = doc.data();
+    const user = usersMap[data.uid];
+    if (!user) continue;
+
+    // Appliquer les filtres
+    if (typeFilter && data.type !== typeFilter) continue;
+    if (statusFilter && data.status !== statusFilter) continue;
+
+    // Appliquer la recherche
+    if (search) {
+      const q = search.toLowerCase();
+      if (!user.phone?.includes(q) && !user.fullName.toLowerCase().includes(q) && !(data.reference || '').toLowerCase().includes(q)) continue;
+    }
+
+    transactions.push({
+      id: doc.id,
+      uid: data.uid,
+      phone: user.phone,
+      fullName: user.fullName,
+      type: data.type,
+      amount: data.amount || 0,
+      status: data.status || 'pending',
+      createdAt: toDate(data.createdAt) || new Date(),
+      method: data.method || 'unknown',
+      reference: data.reference || null,
+      reason: data.reason || null,
+    });
+  }
+
+  return transactions.slice(0, limit);
+}
