@@ -12,8 +12,16 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Debug log
+console.log('[Firebase Config Debug]', {
+  dataSource: import.meta.env.VITE_DATA_SOURCE,
+  apiKey: firebaseConfig.apiKey ? '✓ (present)' : '✗ (missing)',
+  authDomain: firebaseConfig.authDomain,
+  projectId: firebaseConfig.projectId,
+});
+
 // Check if Firebase is properly configured
-const isFirebaseConfigured = Object.values(firebaseConfig).every(val => val && val !== '');
+const isFirebaseConfigured = Object.values(firebaseConfig).every(val => val && typeof val === 'string' && val.trim() !== '');
 
 if (!isFirebaseConfigured) {
   if (import.meta.env.VITE_DATA_SOURCE === 'firebase') {
