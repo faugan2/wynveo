@@ -21,15 +21,29 @@ console.log('[Firebase Config Debug]', {
 });
 
 // Check if Firebase is properly configured
-const isFirebaseConfigured = Object.values(firebaseConfig).every(val => val && typeof val === 'string' && val.trim() !== '');
+const isFirebaseConfigured =
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId;
 
-if (!isFirebaseConfigured) {
+console.log('[Firebase] Initialized:', {
+  configured: !!isFirebaseConfigured,
+  apiKey: firebaseConfig.apiKey ? 'present' : 'MISSING',
+  authDomain: firebaseConfig.authDomain ? 'present' : 'MISSING',
+  projectId: firebaseConfig.projectId ? 'present' : 'MISSING',
+  dataSource: import.meta.env.VITE_DATA_SOURCE,
+});
+
+if (isFirebaseConfigured) {
+  const app = initializeApp(firebaseConfig);
+  export const auth = getAuth(app);
+  export const db = getFirestore(app);
+} else {
   if (import.meta.env.VITE_DATA_SOURCE === 'firebase') {
-    throw new Error('Firebase is not configured! Set VITE_DATA_SOURCE=mock or fill in Firebase credentials in .env');
+    throw new Error('Firebase credentials missing! Check .env.local or apps/player/.env');
   }
-  console.warn('[Firebase] Skipped: Not configured (using mock mode)');
+  console.warn('[Firebase] Skipped (mock mode)');
+  export const auth = null;
+  export const db = null;
 }
-
-const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
-export const auth = app ? getAuth(app) : null;
-export const db = app ? getFirestore(app) : null;
