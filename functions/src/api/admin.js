@@ -2,6 +2,7 @@
 import { onCall } from 'firebase-functions/v2/https';
 import { requireRole, ROLES } from '../lib/guards.js';
 import { reviewWithdrawal } from '../services/withdrawalService.js';
+import { getFinancialSummary, getUserFinancialStats, getReportByPeriod } from '../services/reportsService.js';
 
 export const adminReviewWithdrawal = onCall(async (request) => {
   const admin = requireRole(request, [ROLES.SUPER, ROLES.FINANCE]);
@@ -54,4 +55,20 @@ export const adminApproveKYC = onCall(async (request) => {
 export const adminRejectKYC = onCall(async (request) => {
   requireRole(request, ['super', 'support']);
   return rejectKYC(requireRole(request, ['super', 'support']), request.data.uid, request.data.reason);
+});
+
+/** Rapports et analytics. */
+export const adminGetFinancialSummary = onCall(async (request) => {
+  requireRole(request, ['super', 'finance']);
+  return getFinancialSummary(request.data);
+});
+
+export const adminGetUserFinancialStats = onCall(async (request) => {
+  requireRole(request, ['super', 'finance']);
+  return getUserFinancialStats(request.data);
+});
+
+export const adminGetReportByPeriod = onCall(async (request) => {
+  requireRole(request, ['super', 'finance']);
+  return getReportByPeriod(request.data);
 });

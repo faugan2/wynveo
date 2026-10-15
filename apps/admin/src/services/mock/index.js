@@ -61,3 +61,4 @@ export const withdrawalAdminService = {
 };
 export { sportAdminService } from './sport.js';
 export { userAdminService } from './users.js';
+export { reportsService } from './reports.js';
