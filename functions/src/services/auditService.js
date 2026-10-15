@@ -1,4 +1,4 @@
-import { db } from '../firebase.js';
+import { db } from '../lib/firebase.js';
 
 /**
  * Service d'audit : logging des actions admin et consultation des logs.

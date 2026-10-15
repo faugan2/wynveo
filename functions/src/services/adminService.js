@@ -1,5 +1,13 @@
-import { db } from '../firebase.js';
-import { AppError } from '../errors.js';
+import { db } from '../lib/firebase.js';
+
+class ServiceError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+  }
+}
+
+const AppError = ServiceError;
 
 /**
  * Gestion des administrateurs : création, suppression, rôles.
