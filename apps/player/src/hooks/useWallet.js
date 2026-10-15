@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { walletService } from '../services/mock/wallet.js';
+import { playerWalletService } from '../services/index.js';
 import { usePlayerSession } from './PlayerSession.jsx';
 
 export function useWallet() {
@@ -13,8 +13,8 @@ export function useWallet() {
     (async () => {
       try {
         const [bal, txs] = await Promise.all([
-          walletService.getBalance(player.uid),
-          walletService.getTransactions(player.uid),
+          playerWalletService.getBalance(player.uid),
+          playerWalletService.getTransactions(player.uid),
         ]);
         setBalance(bal);
         setTransactions(txs);
@@ -28,7 +28,7 @@ export function useWallet() {
 
   const createDeposit = async (amount, method) => {
     try {
-      const tx = await walletService.createDeposit(player.uid, { amount, method });
+      const tx = await playerWalletService.createDeposit(player.uid, amount, method);
       setTransactions((prev) => [tx, ...prev]);
       return tx;
     } catch (err) {
@@ -39,7 +39,7 @@ export function useWallet() {
 
   const requestWithdrawal = async (amount, method) => {
     try {
-      const tx = await walletService.requestWithdrawal(player.uid, { amount, method });
+      const tx = await playerWalletService.requestWithdrawal(player.uid, amount, method);
       setTransactions((prev) => [tx, ...prev]);
       return tx;
     } catch (err) {

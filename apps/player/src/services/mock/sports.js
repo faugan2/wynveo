@@ -6,23 +6,24 @@ const mockEvents = [
   { id: 'sp3', sport: 'basketball', league: 'NBA', home: 'Lakers', away: 'Celtics', startAt: new Date(Date.now() + 8 * 60 * 60 * 1000), markets: { h2h: { home: 1.80, away: 2.00 } } },
 ];
 
-export const sportsService = {
+export const playerSportsService = {
   async getEvents() {
     await delay();
     return mockEvents;
   },
 
-  async placeBet(uid, { eventId, selection, amount }) {
+  async placeBet(uid, eventId, selection, amount) {
     await delay(800);
     const event = mockEvents.find((e) => e.id === eventId);
     if (!event) throw new Error('Événement non trouvé');
+    const odds = event.markets.h2h[selection];
     return {
       id: `bet_${Date.now()}`,
       eventId,
       selection,
       amount,
-      odds: 2.50,
-      potentialWin: amount * 2.50,
+      odds,
+      potentialWin: amount * odds,
       status: 'active',
       placedAt: new Date(),
     };

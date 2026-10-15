@@ -1,7 +1,7 @@
 const delay = (ms = 400) => new Promise((r) => setTimeout(r, ms));
 
-export const gamesService = {
-  async playLuckyNumbers(uid, { numbers, amount }) {
+export const playerGamesService = {
+  async playLuckyNumbers(uid, numbers, amount) {
     await delay(2000);
     const drawnNumber = Math.floor(Math.random() * 50) + 1;
     const won = numbers.includes(drawnNumber);
@@ -17,7 +17,7 @@ export const gamesService = {
     };
   },
 
-  async playJackpot(uid, { amount }) {
+  async playJackpot(uid, amount) {
     await delay(1500);
     const multiplier = Math.random();
     let win = false;
@@ -44,7 +44,7 @@ export const gamesService = {
     };
   },
 
-  async playBox(uid, { selection, amount }) {
+  async playBox(uid, selection, amount) {
     await delay(1500);
     const result = Math.floor(Math.random() * 10);
     const won = result.toString() === selection;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { gamesService } from '../services/mock/games.js';
+import { playerGamesService } from '../services/index.js';
 import { usePlayerSession } from './PlayerSession.jsx';
 
 export function useGames() {
@@ -11,7 +11,7 @@ export function useGames() {
     setLoading(true);
     setError(null);
     try {
-      const result = await gamesService.playLuckyNumbers(player.uid, { numbers, amount });
+      const result = await playerGamesService.playLuckyNumbers(player.uid, numbers, amount);
       return result;
     } catch (err) {
       setError(err.message);
@@ -25,7 +25,7 @@ export function useGames() {
     setLoading(true);
     setError(null);
     try {
-      const result = await gamesService.playJackpot(player.uid, { amount });
+      const result = await playerGamesService.playJackpot(player.uid, amount);
       return result;
     } catch (err) {
       setError(err.message);
@@ -39,7 +39,7 @@ export function useGames() {
     setLoading(true);
     setError(null);
     try {
-      const result = await gamesService.playBox(player.uid, { selection, amount });
+      const result = await playerGamesService.playBox(player.uid, selection, amount);
       return result;
     } catch (err) {
       setError(err.message);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { sportsService } from '../services/mock/sports.js';
+import { playerSportsService } from '../services/index.js';
 import { usePlayerSession } from './PlayerSession.jsx';
 
 export function useSports() {
@@ -11,7 +11,7 @@ export function useSports() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await sportsService.getEvents();
+        const data = await playerSportsService.getEvents(player.uid);
         setEvents(data);
       } catch (err) {
         setError(err.message);
@@ -23,7 +23,7 @@ export function useSports() {
 
   const placeBet = async (eventId, selection, amount) => {
     try {
-      const bet = await sportsService.placeBet(player.uid, { eventId, selection, amount });
+      const bet = await playerSportsService.placeBet(player.uid, eventId, selection, amount);
       return bet;
     } catch (err) {
       setError(err.message);

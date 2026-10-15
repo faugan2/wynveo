@@ -6,7 +6,7 @@ const mockTransactions = [
   { id: 'tx3', type: 'deposit', amount: 100000, method: 'TMONEY', status: 'success', date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
 ];
 
-export const walletService = {
+export const playerWalletService = {
   async getBalance(uid) {
     await delay();
     return {
@@ -21,7 +21,7 @@ export const walletService = {
     return mockTransactions;
   },
 
-  async createDeposit(uid, { amount, method }) {
+  async createDeposit(uid, amount, method) {
     await delay(1500);
     const tx = {
       id: `tx_${Date.now()}`,
@@ -35,7 +35,7 @@ export const walletService = {
     return tx;
   },
 
-  async requestWithdrawal(uid, { amount, method }) {
+  async requestWithdrawal(uid, amount, method) {
     await delay(1500);
     const tx = {
       id: `tx_${Date.now()}`,
