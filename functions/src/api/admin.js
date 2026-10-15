@@ -9,7 +9,7 @@ export const adminReviewWithdrawal = onCall(async (request) => {
 });
 
 /** Utilisateurs : liste, détail, suspension, reset password. */
-import { listUsers, getUser, setSuspended, resetPassword } from '../services/userAdminService.js';
+import { listUsers, getUser, setSuspended, resetPassword, getUserTransactions } from '../services/userAdminService.js';
 
 export const adminListUsers = onCall(async (request) => {
   requireRole(request, ['super', 'support']);
@@ -29,4 +29,9 @@ export const adminSetSuspended = onCall(async (request) => {
 export const adminResetPassword = onCall(async (request) => {
   requireRole(request, ['super']);
   return resetPassword(requireRole(request, ['super']), request.data.uid);
+});
+
+export const adminGetUserTransactions = onCall(async (request) => {
+  requireRole(request, ['super', 'support']);
+  return getUserTransactions(request.data.uid, request.data.limit ?? 50);
 });

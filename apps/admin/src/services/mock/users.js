@@ -14,6 +14,32 @@ const users = [
   { uid: 'p4', fullName: 'Afi Folly', phone: '+22890478512', email: 'afi@exemple.com', status: 'suspended', kycStatus: 'pending', phoneVerified: true, createdAt: new Date('2026-09-05'), balance: 0, bonusBalance: 0, totalDeposited: 74_000, totalWithdrawn: 20_000, depositCount: 6, withdrawalCount: 2, gameStaked: 35_000, gameWon: 32_000, sportStaked: 18_000, sportWon: 22_000, suspiciousRatio: true },
 ];
 
+const mockTransactions = {
+  p1: [
+    { id: 'tx1', type: 'deposit', amount: 50_000, status: 'success', createdAt: new Date('2026-08-20'), method: 'mtn', reference: 'DEP001' },
+    { id: 'tx2', type: 'deposit', amount: 75_000, status: 'success', createdAt: new Date('2026-08-25'), method: 'moov', reference: 'DEP002' },
+    { id: 'tx3', type: 'withdrawal', amount: 20_000, status: 'success', createdAt: new Date('2026-09-05'), method: 'mtn', reference: 'WTH001' },
+    { id: 'tx4', type: 'deposit', amount: 85_000, status: 'success', createdAt: new Date('2026-09-10'), method: 'card', reference: 'DEP003' },
+    { id: 'tx5', type: 'withdrawal', amount: 10_000, status: 'success', createdAt: new Date('2026-09-12'), method: 'mtn', reference: 'WTH002' },
+  ],
+  p2: [
+    { id: 'tx10', type: 'deposit', amount: 30_000, status: 'success', createdAt: new Date('2026-09-02'), method: 'mtn', reference: 'DEP004' },
+    { id: 'tx11', type: 'deposit', amount: 60_000, status: 'success', createdAt: new Date('2026-09-08'), method: 'moov', reference: 'DEP005' },
+  ],
+  p3: [
+    { id: 'tx20', type: 'deposit', amount: 30_000, status: 'success', createdAt: new Date('2026-09-12'), method: 'mtn', reference: 'DEP006' },
+    { id: 'tx21', type: 'deposit', amount: 30_000, status: 'success', createdAt: new Date('2026-09-15'), method: 'mtn', reference: 'DEP007' },
+    { id: 'tx22', type: 'withdrawal', amount: 15_000, status: 'success', createdAt: new Date('2026-09-20'), method: 'mtn', reference: 'WTH003' },
+  ],
+  p4: [
+    { id: 'tx30', type: 'deposit', amount: 25_000, status: 'success', createdAt: new Date('2026-09-06'), method: 'mtn', reference: 'DEP008' },
+    { id: 'tx31', type: 'deposit', amount: 25_000, status: 'success', createdAt: new Date('2026-09-08'), method: 'moov', reference: 'DEP009' },
+    { id: 'tx32', type: 'deposit', amount: 24_000, status: 'success', createdAt: new Date('2026-09-12'), method: 'mtn', reference: 'DEP010' },
+    { id: 'tx33', type: 'withdrawal', amount: 12_000, status: 'success', createdAt: new Date('2026-09-18'), method: 'mtn', reference: 'WTH004' },
+    { id: 'tx34', type: 'withdrawal', amount: 8_000, status: 'success', createdAt: new Date('2026-09-22'), method: 'moov', reference: 'WTH005' },
+  ],
+};
+
 export const userAdminService = {
   async listUsers({ search = '', statusFilter = null, kycFilter = null, limit = 100 } = {}) {
     await delay();
@@ -48,5 +74,11 @@ export const userAdminService = {
     const u = users.find((x) => x.uid === uid);
     if (!u) throw new Error('Joueur introuvable.');
     return { ok: true, message: 'Réinitialisation programmée. L\'utilisateur devra se reconnecter.' };
+  },
+
+  async getUserTransactions(uid, limit = 50) {
+    await delay();
+    const txs = mockTransactions[uid] || [];
+    return txs.slice(0, limit);
   },
 };

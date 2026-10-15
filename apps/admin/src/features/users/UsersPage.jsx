@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useAdminSession, can } from '../../hooks/AdminSession.jsx';
 import { useAdminUsers } from '../../hooks/useAdminUsers.js';
 import { formatFCFA, formatPhone } from '@wynveo/core';
@@ -27,6 +28,7 @@ function UserRow({ user, onSelect }) {
 
 /** Liste des joueurs avec filtres, recherche et actions. */
 export function UsersPage() {
+  const navigate = useNavigate();
   const { admin } = useAdminSession();
   const { items, loading, error, search, setSearch, statusFilter, setStatusFilter, kycFilter, setKycFilter, KYC_LABEL, STATUS_LABEL } = useAdminUsers();
   const allowed = can.manageSport(admin.role) || admin.role === 'support';
@@ -82,7 +84,7 @@ export function UsersPage() {
                 <tr><th>Joueur</th><th className="small">Inscription</th><th>Statut</th><th>KYC</th><th className="num">Solde</th><th className="num">Dépôts</th><th className="num">Bilan</th><th>Jeux</th><th>Sport</th><th>Actions</th></tr>
               </thead>
               <tbody>
-                {items.map((u) => <UserRow key={u.uid} user={u} onSelect={(uid) => window.location.hash = `/users/${uid}`} />)}
+                {items.map((u) => <UserRow key={u.uid} user={u} onSelect={(uid) => navigate(`/utilisateurs/${uid}`)} />)}
               </tbody>
             </table>
           </div>

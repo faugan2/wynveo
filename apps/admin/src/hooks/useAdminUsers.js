@@ -79,3 +79,33 @@ export function useUserActions() {
     resetPassword: run('reset-pw', (uid) => userAdminService.resetPassword(uid)),
   };
 }
+
+/** Détail utilisateur avec historique des transactions. */
+export function useUserDetail(uid) {
+  const [user, setUser] = useState(null);
+  const [transactions, setTransactions] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!uid) return;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [u, txs] = await Promise.all([
+          userAdminService.getUser(uid),
+          userAdminService.getUserTransactions(uid, 50),
+        ]);
+        setUser(u);
+        setTransactions(txs);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [uid]);
+
+  return { user, transactions, loading, error, KYC_LABEL, STATUS_LABEL };
+}

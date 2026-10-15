@@ -115,3 +115,26 @@ export async function resetPassword(admin, uid) {
   });
   return { ok: true, message: 'Réinitialisation programmée. L\'utilisateur devra se reconnecter.' };
 }
+
+/** Récupère l'historique des transactions (dépôts + retraits) d'un utilisateur. */
+export async function getUserTransactions(uid, limit = 50) {
+  const txSnap = await db.collection(COL.TRANSACTIONS)
+    .where('uid', '==', uid)
+    .orderBy('createdAt', 'desc')
+    .limit(limit)
+    .get();
+
+  return txSnap.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      type: data.type, // 'deposit' | 'withdrawal'
+      amount: data.amount || 0,
+      status: data.status || 'pending', // 'pending' | 'success' | 'failed'
+      createdAt: toDate(data.createdAt) || new Date(),
+      method: data.method || 'unknown', // 'mtn' | 'moov' | 'card' | etc.
+      reference: data.reference || null,
+      reason: data.reason || null, // pour retraits échoués
+    };
+  });
+}
