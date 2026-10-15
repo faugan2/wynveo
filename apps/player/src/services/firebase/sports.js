@@ -1,5 +1,9 @@
 import { db } from '../../config/firebase.js';
 
+if (!db) {
+  throw new Error('Firebase sports service requires VITE_DATA_SOURCE=firebase and valid Firebase credentials in .env');
+}
+
 export const playerSportsService = {
   async getEvents(userId) {
     // In production, fetch from Firestore collection

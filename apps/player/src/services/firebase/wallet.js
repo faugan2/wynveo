@@ -1,5 +1,9 @@
 import { db } from '../../config/firebase.js';
 
+if (!db) {
+  throw new Error('Firebase wallet service requires VITE_DATA_SOURCE=firebase and valid Firebase credentials in .env');
+}
+
 export const playerWalletService = {
   async getBalance(userId) {
     const doc = await db.collection('users').doc(userId).get();

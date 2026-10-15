@@ -1,5 +1,9 @@
 import { db } from '../../config/firebase.js';
 
+if (!db) {
+  throw new Error('Firebase games service requires VITE_DATA_SOURCE=firebase and valid Firebase credentials in .env');
+}
+
 export const playerGamesService = {
   async playLuckyNumbers(userId, numbers, amount) {
     const drawn = Math.floor(Math.random() * 50) + 1;

@@ -1,6 +1,11 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as fbSignOut, onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../../config/firebase.js';
 
+// Validate Firebase is configured
+if (!auth || !db) {
+  throw new Error('Firebase auth service requires VITE_DATA_SOURCE=firebase and valid Firebase credentials in .env');
+}
+
 export const playerAuthService = {
   onAuthChange(cb) {
     return onAuthStateChanged(auth, async (user) => {
