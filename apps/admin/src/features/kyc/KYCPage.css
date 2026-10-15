@@ -1,0 +1,70 @@
+.kyc-table tbody tr {
+  transition: background-color 0.2s;
+}
+
+.kyc-table tbody .kyc-row.kyc-pending {
+  background: rgba(255, 235, 59, 0.05);
+}
+
+.kyc-table tbody .kyc-row.kyc-rejected {
+  background: rgba(244, 67, 54, 0.05);
+}
+
+.kyc-table tbody .kyc-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kyc-reject-form {
+  background: #fff8f0;
+  border-top: 2px solid #ffb74d;
+}
+
+.kyc-reject-form td {
+  padding: 1.5rem !important;
+}
+
+.reject-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reject-form label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.reject-form textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.reject-form textarea:focus {
+  outline: none;
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.reject-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.kyc-info {
+  font-size: 0.85rem;
+  color: #666;
+  padding: 4px 0;
+}

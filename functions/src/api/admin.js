@@ -9,7 +9,7 @@ export const adminReviewWithdrawal = onCall(async (request) => {
 });
 
 /** Utilisateurs : liste, détail, suspension, reset password. */
-import { listUsers, getUser, setSuspended, resetPassword, getUserTransactions, listTransactions } from '../services/userAdminService.js';
+import { listUsers, getUser, setSuspended, resetPassword, getUserTransactions, listTransactions, listKYCRequests, approveKYC, rejectKYC } from '../services/userAdminService.js';
 
 export const adminListUsers = onCall(async (request) => {
   requireRole(request, ['super', 'support']);
@@ -39,4 +39,19 @@ export const adminGetUserTransactions = onCall(async (request) => {
 export const adminListTransactions = onCall(async (request) => {
   requireRole(request, ['super', 'support']);
   return listTransactions(request.data);
+});
+
+export const adminListKYCRequests = onCall(async (request) => {
+  requireRole(request, ['super', 'support']);
+  return listKYCRequests(request.data);
+});
+
+export const adminApproveKYC = onCall(async (request) => {
+  requireRole(request, ['super', 'support']);
+  return approveKYC(requireRole(request, ['super', 'support']), request.data.uid);
+});
+
+export const adminRejectKYC = onCall(async (request) => {
+  requireRole(request, ['super', 'support']);
+  return rejectKYC(requireRole(request, ['super', 'support']), request.data.uid, request.data.reason);
 });

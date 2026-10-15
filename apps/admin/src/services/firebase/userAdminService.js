@@ -10,4 +10,7 @@ export const userAdminService = {
   resetPassword: call('adminResetPassword'),
   getUserTransactions: call('adminGetUserTransactions'),
   listTransactions: call('adminListTransactions'),
+  listKYCRequests: call('adminListKYCRequests'),
+  approveKYC: call('adminApproveKYC'),
+  rejectKYC: call('adminRejectKYC'),
 };

@@ -189,3 +189,89 @@ export async function listTransactions({ typeFilter = null, statusFilter = null,
 
   return transactions.slice(0, limit);
 }
+
+/** Liste les demandes KYC (pending + rejected). */
+export async function listKYCRequests({ statusFilter = null, limit = 100 } = {}) {
+  const usersSnap = await db.collection(COL.USERS).limit(limit * 2).get();
+  const requests = [];
+
+  for (const doc of usersSnap.docs) {
+    const u = doc.data();
+    const kycStatus = u.kycStatus || 'none';
+
+    // Filtrer par statut
+    if (statusFilter && kycStatus !== statusFilter) continue;
+    // On veut les demandes en attente ou rejetées
+    if (!['pending', 'rejected'].includes(kycStatus)) continue;
+
+    requests.push({
+      uid: doc.id,
+      email: u.email || null,
+      fullName: u.fullName || 'Inconnu',
+      phone: u.phone || null,
+      kycStatus,
+      status: u.status || 'active',
+      kycSubmittedAt: toDate(u.kycSubmittedAt) || null,
+      kycReviewedAt: toDate(u.kycReviewedAt) || null,
+      kycReviewedBy: u.kycReviewedBy || null,
+      kycRejectionReason: u.kycRejectionReason || null,
+      createdAt: toDate(u.createdAt) || new Date(),
+      totalDeposited: u.totalDeposited || 0,
+    });
+  }
+
+  return requests.slice(0, limit);
+}
+
+/** Approuve une demande KYC. */
+export async function approveKYC(admin, uid) {
+  const userRef = db.collection(COL.USERS).doc(uid);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists()) throw new HttpsError('not-found', 'Utilisateur introuvable.');
+
+  await userRef.update({
+    kycStatus: 'verified',
+    kycReviewedAt: FieldValue.serverTimestamp(),
+    kycReviewedBy: admin.email,
+    kycRejectionReason: FieldValue.delete(),
+  });
+
+  logAdminAction({
+    t: db.runTransaction,
+    adminUid: admin.uid,
+    adminEmail: admin.email,
+    action: 'kyc.approve',
+    target: { type: 'user', id: uid },
+  });
+
+  return { ok: true };
+}
+
+/** Rejette une demande KYC. */
+export async function rejectKYC(admin, uid, reason) {
+  if (!String(reason ?? '').trim()) {
+    throw new HttpsError('invalid-argument', 'Veuillez indiquer la raison du rejet.');
+  }
+
+  const userRef = db.collection(COL.USERS).doc(uid);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists()) throw new HttpsError('not-found', 'Utilisateur introuvable.');
+
+  await userRef.update({
+    kycStatus: 'rejected',
+    kycReviewedAt: FieldValue.serverTimestamp(),
+    kycReviewedBy: admin.email,
+    kycRejectionReason: reason.trim(),
+  });
+
+  logAdminAction({
+    t: db.runTransaction,
+    adminUid: admin.uid,
+    adminEmail: admin.email,
+    action: 'kyc.reject',
+    target: { type: 'user', id: uid },
+    details: { reason: reason.trim() },
+  });
+
+  return { ok: true };
+}

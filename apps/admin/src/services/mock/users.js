@@ -121,4 +121,55 @@ export const userAdminService = {
 
     return allTxs.slice(0, limit);
   },
+
+  async listKYCRequests({ statusFilter = null, limit = 100 } = {}) {
+    await delay();
+    let requests = users.filter((u) => ['pending', 'rejected'].includes(u.kycStatus));
+
+    if (statusFilter) {
+      requests = requests.filter((u) => u.kycStatus === statusFilter);
+    }
+
+    return requests.map((u) => ({
+      uid: u.uid,
+      email: u.email,
+      fullName: u.fullName,
+      phone: u.phone,
+      kycStatus: u.kycStatus,
+      status: u.status,
+      kycSubmittedAt: u.kycSubmittedAt || null,
+      kycReviewedAt: u.kycReviewedAt || null,
+      kycReviewedBy: u.kycReviewedBy || null,
+      kycRejectionReason: u.kycRejectionReason || null,
+      createdAt: u.createdAt,
+      totalDeposited: u.totalDeposited,
+    })).slice(0, limit);
+  },
+
+  async approveKYC(uid) {
+    await delay(300);
+    const u = users.find((x) => x.uid === uid);
+    if (!u) throw new Error('Utilisateur introuvable.');
+    u.kycStatus = 'verified';
+    u.kycReviewedAt = new Date();
+    u.kycReviewedBy = 'admin@wynveo.com';
+    u.kycRejectionReason = null;
+    emit();
+    return { ok: true };
+  },
+
+  async rejectKYC(uid, reason) {
+    await delay(300);
+    if (!String(reason ?? '').trim()) {
+      throw new Error('Veuillez indiquer la raison du rejet.');
+    }
+    const u = users.find((x) => x.uid === uid);
+    if (!u) throw new Error('Utilisateur introuvable.');
+    u.kycStatus = 'rejected';
+    u.kycReviewedAt = new Date();
+    u.kycReviewedBy = 'admin@wynveo.com';
+    u.kycRejectionReason = reason.trim();
+    emit();
+    return { ok: true };
+  },
 };

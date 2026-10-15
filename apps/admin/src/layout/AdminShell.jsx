@@ -11,9 +11,10 @@ const MENU = [
   { to: '/retraits', label: 'Retraits à valider', badge: 'pending' },
   { to: '/utilisateurs', label: 'Utilisateurs' },
   { to: '/transactions', label: 'Transactions' },
+  { to: '/kyc', label: 'Vérifications KYC' },
   { to: '/matchs', label: 'Matchs & cotes' },
   { group: 'BIENTÔT' },
-  { label: 'Vérifications KYC' }, { label: 'Jeux' }, { label: 'Promotions' },
+  { label: 'Jeux' }, { label: 'Promotions' },
   { label: 'Rapports' }, { label: 'Admins & audit' },
 ];
 

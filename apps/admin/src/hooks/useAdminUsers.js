@@ -143,3 +143,53 @@ export function useTransactions() {
     TX_TYPE_LABEL, TX_STATUS_LABEL,
   };
 }
+
+/** Liste les demandes KYC en attente et rejetées. */
+export function useKYCRequests() {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      setError(null);
+      try {
+        const res = await userAdminService.listKYCRequests({ statusFilter, limit: 100 });
+        setItems(res);
+      } catch (err) {
+        setError(err.message);
+      }
+    })();
+  }, [statusFilter]);
+
+  return {
+    items: items ?? [],
+    loading: items === null && !error,
+    error,
+    statusFilter, setStatusFilter,
+    KYC_LABEL, STATUS_LABEL,
+  };
+}
+
+/** Actions KYC. */
+export function useKYCActions() {
+  const [busy, setBusy] = useState(null);
+  const [error, setError] = useState(null);
+  const run = (key, fn) => async (...args) => {
+    setBusy(key);
+    setError(null);
+    try {
+      return await fn(...args);
+    } catch (err) {
+      setError(err.message);
+      return null;
+    } finally {
+      setBusy(null);
+    }
+  };
+  return {
+    busy, error, clear: () => setError(null),
+    approve: run('approve', (uid) => userAdminService.approveKYC(uid)),
+    reject: run('reject', (uid, reason) => userAdminService.rejectKYC(uid, reason)),
+  };
+}
