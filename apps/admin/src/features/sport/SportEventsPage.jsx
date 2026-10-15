@@ -41,7 +41,10 @@ export function SportEventsPage() {
   const allowed = can.manageSport(admin.role);
   const [tab, setTab] = useState('open');
   const [modal, setModal] = useState(null); // { kind: 'form'|'result', event }
-  const { items, loading, error, stats } = useAdminSportEvents(tab);
+  const [search, setSearch] = useState('');
+  const [sportFilter, setSportFilter] = useState(null);
+  const [leagueFilter, setLeagueFilter] = useState(null);
+  const { items, allItems, loading, error, stats, leagues } = useAdminSportEvents(tab, search, sportFilter, leagueFilter);
   const act = useSportActions();
   const close = () => { setModal(null); act.clearError(); };
 
@@ -61,7 +64,33 @@ export function SportEventsPage() {
         <Kpi label={tab === 'open' ? 'Matchs ouverts' : 'Matchs terminés'} value={stats.count} />
         <Kpi label="Tickets" value={formatAmount(stats.bets)} />
         <Kpi label="Mises engagées" value={formatFCFA(stats.stake)} />
+        {tab === 'closed' && <Kpi label="Payé" value={formatFCFA(stats.paidOut)} />}
+        {tab === 'closed' && <Kpi label="ROI" value={`${stats.roi}%`} tone={stats.roi < 0 ? 'bad' : 'good'} />}
+        {tab === 'closed' && <Kpi label="Profit/Loss" value={formatFCFA(stats.profitLoss)} tone={stats.profitLoss < 0 ? 'bad' : 'good'} />}
         {tab === 'open' && <Kpi label="Suspendus" value={stats.suspended} tone={stats.suspended ? 'warn' : undefined} />}
+      </div>
+
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
+        <input
+          type="text"
+          className="input"
+          placeholder="Rechercher : équipe, ligue..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ flex: '1 1 200px' }}
+        />
+        <select className="input" value={sportFilter ?? ''} onChange={(e) => setSportFilter(e.target.value || null)}>
+          <option value="">Tous les sports</option>
+          {Object.entries(SPORTS).map(([key, sport]) => (
+            <option key={key} value={key}>{sport.name}</option>
+          ))}
+        </select>
+        <select className="input" value={leagueFilter ?? ''} onChange={(e) => setLeagueFilter(e.target.value || null)}>
+          <option value="">Toutes les ligues</option>
+          {leagues.map((league) => (
+            <option key={league} value={league}>{league}</option>
+          ))}
+        </select>
       </div>
 
       <div className="tabs" role="tablist">

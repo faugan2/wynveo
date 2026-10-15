@@ -3,20 +3,61 @@ import { SPORTS, marginOf } from '@wynveo/core';
 import { sportAdminService } from '../services/index.js';
 
 /** Liste des matchs, onglet 'open' (à venir / en direct) ou 'closed' (terminés). */
-export function useAdminSportEvents(tab) {
+export function useAdminSportEvents(tab, search = '', sportFilter = null, leagueFilter = null) {
   const [items, setItems] = useState(null);
   const [error, setError] = useState(null);
   useEffect(() => { setItems(null); return sportAdminService.watchEvents(tab, setItems, (e) => setError(e.message)); }, [tab]);
+
+  const filtered = useMemo(() => {
+    let list = items ?? [];
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter((e) => e.home.toLowerCase().includes(q) || e.away.toLowerCase().includes(q));
+    }
+    if (sportFilter) {
+      list = list.filter((e) => e.sport === sportFilter);
+    }
+    if (leagueFilter) {
+      list = list.filter((e) => e.league === leagueFilter);
+    }
+    return list;
+  }, [items, search, sportFilter, leagueFilter]);
+
   const stats = useMemo(() => {
-    const list = items ?? [];
+    const list = filtered;
+    const byStats = {};
+    list.forEach((e) => {
+      const key = e.sport;
+      if (!byStats[key]) byStats[key] = { stake: 0, bets: 0, paidOut: 0 };
+      byStats[key].stake += e.totalStake || 0;
+      byStats[key].bets += e.betCount || 0;
+      byStats[key].paidOut += e.paidOut || 0;
+    });
+
     return {
       count: list.length,
       bets: list.reduce((s, e) => s + e.betCount, 0),
       stake: list.reduce((s, e) => s + e.totalStake, 0),
+      paidOut: list.reduce((s, e) => s + (e.paidOut || 0), 0),
       suspended: list.filter((e) => e.suspended).length,
+      bySport: byStats,
+      roi: list.reduce((s, e) => s + e.totalStake, 0) > 0
+        ? (list.reduce((s, e) => s + (e.paidOut || 0), 0) / list.reduce((s, e) => s + e.totalStake, 0) * 100 - 100).toFixed(1)
+        : 0,
+      profitLoss: list.reduce((s, e) => s + (e.paidOut || 0), 0) - list.reduce((s, e) => s + e.totalStake, 0),
     };
-  }, [items]);
-  return { items: items ?? [], loading: items === null && !error, error, stats };
+  }, [filtered]);
+
+  const leagues = useMemo(() => [...new Set((items ?? []).map((e) => e.league))], [items]);
+
+  return {
+    items: filtered,
+    allItems: items ?? [],
+    loading: items === null && !error,
+    error,
+    stats,
+    leagues,
+  };
 }
 
 /** Actions de l'admin sur les matchs, avec l'état « en cours » et le dernier message. */
