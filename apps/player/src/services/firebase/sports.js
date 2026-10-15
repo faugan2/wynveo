@@ -6,12 +6,11 @@ if (!db) {
 
 export const playerSportsService = {
   async getEvents(userId) {
-    // In production, fetch from Firestore collection
     const snap = await db.collection('sports_events').get();
     return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   },
 
-  async placeBet(userId, eventId, selection, amount) {
+  async placeBet(uid, eventId, selection, amount) {
     const eventDoc = await db.collection('sports_events').doc(eventId).get();
     if (!eventDoc.exists) throw new Error('Événement non trouvé');
 
@@ -20,7 +19,7 @@ export const playerSportsService = {
     const potentialWin = amount * odds;
 
     const bet = {
-      userId,
+      userId: uid,
       eventId,
       selection,
       amount,
@@ -30,7 +29,7 @@ export const playerSportsService = {
       createdAt: new Date(),
     };
 
-    const ref = await db.collection('sports_bets').add(bet);
+    const ref = await db.collection('users').doc(uid).collection('sports_bets').add(bet);
     return { id: ref.id, ...bet };
   },
 };

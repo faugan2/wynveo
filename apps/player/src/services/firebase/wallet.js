@@ -26,7 +26,7 @@ export const playerWalletService = {
     const deposit = {
       type: 'deposit',
       amount,
-      method, // TMONEY, FLOOZ, BANK
+      method,
       status: 'pending',
       createdAt: new Date(),
     };
@@ -37,8 +37,6 @@ export const playerWalletService = {
       .collection('transactions')
       .add(deposit);
 
-    // In real scenario, this would trigger payment gateway
-    // For now, auto-approve after 2 seconds
     setTimeout(async () => {
       await db
         .collection('users')
@@ -46,7 +44,7 @@ export const playerWalletService = {
         .collection('transactions')
         .doc(ref.id)
         .update({ status: 'completed' });
-      
+
       const userDoc = await db.collection('users').doc(userId).get();
       const currentBalance = userDoc.data().balance || 0;
       await db.collection('users').doc(userId).update({
@@ -79,7 +77,6 @@ export const playerWalletService = {
       .collection('transactions')
       .add(withdrawal);
 
-    // Deduct immediately for pending withdrawals
     await db.collection('users').doc(userId).update({
       balance: currentBalance - amount,
     });

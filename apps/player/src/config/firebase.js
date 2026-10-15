@@ -1,8 +1,11 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+/**
+ * Initialisation Firebase (syntaxe v8 compat, comme admin)
+ * Compatible avec db.collection() et auth.signInWithEmailAndPassword()
+ */
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-// Validate Firebase config before initializing
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -12,14 +15,6 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Debug log
-console.log('[Firebase Config Debug]', {
-  dataSource: import.meta.env.VITE_DATA_SOURCE,
-  apiKey: firebaseConfig.apiKey ? '✓ (present)' : '✗ (missing)',
-  authDomain: firebaseConfig.authDomain,
-  projectId: firebaseConfig.projectId,
-});
-
 // Check if Firebase is properly configured
 const isFirebaseConfigured =
   firebaseConfig.apiKey &&
@@ -27,23 +22,26 @@ const isFirebaseConfigured =
   firebaseConfig.projectId &&
   firebaseConfig.appId;
 
-console.log('[Firebase] Initialized:', {
+console.log('[Firebase] Status:', {
   configured: !!isFirebaseConfigured,
-  apiKey: firebaseConfig.apiKey ? 'present' : 'MISSING',
-  authDomain: firebaseConfig.authDomain ? 'present' : 'MISSING',
-  projectId: firebaseConfig.projectId ? 'present' : 'MISSING',
   dataSource: import.meta.env.VITE_DATA_SOURCE,
+  apiKey: firebaseConfig.apiKey ? '✓' : '✗',
 });
 
+let auth = null;
+let db = null;
+
 if (isFirebaseConfigured) {
-  const app = initializeApp(firebaseConfig);
-  export const auth = getAuth(app);
-  export const db = getFirestore(app);
+  if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  auth = firebase.auth();
+  db = firebase.firestore();
 } else {
   if (import.meta.env.VITE_DATA_SOURCE === 'firebase') {
-    throw new Error('Firebase credentials missing! Check .env.local or apps/player/.env');
+    throw new Error('Firebase credentials missing! Check .env.local');
   }
   console.warn('[Firebase] Skipped (mock mode)');
-  export const auth = null;
-  export const db = null;
 }
+
+export { auth, db };

@@ -25,7 +25,7 @@ export const playerGamesService = {
   async playJackpot(userId, amount) {
     const rand = Math.random();
     let multiplier = 0;
-    
+
     if (rand > 0.95) multiplier = 50;
     else if (rand > 0.85) multiplier = 10;
     else if (rand > 0.70) multiplier = 2;
