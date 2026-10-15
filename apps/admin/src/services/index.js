@@ -3,4 +3,4 @@ const impl = import.meta.env.VITE_DATA_SOURCE === 'mock'
   ? await import('./mock/index.js')
   : await import('./firebase/index.js');
 
-export const { adminAuthService, withdrawalAdminService, sportAdminService, dataSource } = impl;
+export const { adminAuthService, withdrawalAdminService, sportAdminService, userAdminService, dataSource } = impl;

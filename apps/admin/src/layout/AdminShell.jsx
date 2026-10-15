@@ -9,6 +9,7 @@ const ROLE_LABEL = { super: 'Super admin', finance: 'Finance', support: 'Support
 const MENU = [
   { to: '/', label: 'Tableau de bord', end: true },
   { to: '/retraits', label: 'Retraits à valider', badge: 'pending' },
+  { to: '/utilisateurs', label: 'Utilisateurs' },
   { to: '/matchs', label: 'Matchs & cotes' },
   { group: 'BIENTÔT' },
   { label: 'Utilisateurs' }, { label: 'Vérifications KYC' }, { label: 'Jeux' }, { label: 'Promotions' },

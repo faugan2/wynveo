@@ -3,6 +3,7 @@ import { AdminSessionProvider, useAdminSession } from '../hooks/AdminSession.jsx
 import { AdminShell } from '../layout/AdminShell.jsx';
 import { LoginPage } from '../features/auth/LoginPage.jsx';
 import { DashboardPage } from '../features/dashboard/DashboardPage.jsx';
+import { UsersPage } from '../features/users/UsersPage.jsx';
 import { WithdrawalsPage } from '../features/withdrawals/WithdrawalsPage.jsx';
 import { SportEventsPage } from '../features/sport/SportEventsPage.jsx';
 
@@ -14,6 +15,7 @@ function Gate() {
     <Routes>
       <Route element={<AdminShell />}>
         <Route index element={<DashboardPage />} />
+        <Route path="utilisateurs" element={<UsersPage />} />
         <Route path="retraits" element={<WithdrawalsPage />} />
         <Route path="matchs" element={<SportEventsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
