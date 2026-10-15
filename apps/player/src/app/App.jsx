@@ -1,58 +1,35 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { SessionProvider } from '../hooks/SessionProvider.jsx';
-import { AppShell } from '../layout/AppShell.jsx';
-import { AuthShell } from '../layout/AuthShell.jsx';
-import { RequirePlayer, GuestOnly, SignupGate } from './guards.jsx';
-import { ROUTES } from './routes.js';
-
-import { WelcomePage } from '../features/auth/WelcomePage.jsx';
+import { PlayerSessionProvider, usePlayerSession } from '../hooks/PlayerSession.jsx';
+import { PlayerShell } from '../layout/PlayerShell.jsx';
 import { LoginPage } from '../features/auth/LoginPage.jsx';
-import { RegisterPage } from '../features/auth/RegisterPage.jsx';
-import { HomePage } from '../features/home/HomePage.jsx';
+import { DashboardPage } from '../features/dashboard/DashboardPage.jsx';
 import { WalletPage } from '../features/wallet/WalletPage.jsx';
-import { DepositPage } from '../features/wallet/DepositPage.jsx';
-import { WithdrawPage } from '../features/wallet/WithdrawPage.jsx';
-import { HistoryPage } from '../features/wallet/HistoryPage.jsx';
+import { SportsPage } from '../features/sports/SportsPage.jsx';
 import { GamesPage } from '../features/games/GamesPage.jsx';
-import { SportPage } from '../features/sport/SportPage.jsx';
-import { BetsPage } from '../features/bets/BetsPage.jsx';
 import { ProfilePage } from '../features/profile/ProfilePage.jsx';
+
+function Gate() {
+  const { status } = usePlayerSession();
+  if (status === 'loading') return <p style={{ padding: 40 }} className="muted">Chargement…</p>;
+  if (status === 'guest') return <LoginPage />;
+  return (
+    <Routes>
+      <Route element={<PlayerShell />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="portefeuille" element={<WalletPage />} />
+        <Route path="sports" element={<SportsPage />} />
+        <Route path="jeux" element={<GamesPage />} />
+        <Route path="profil" element={<ProfilePage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  );
+}
 
 export function App() {
   return (
-    <SessionProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<GuestOnly />}>
-            <Route element={<AuthShell />}>
-              <Route path={ROUTES.welcome} element={<WelcomePage />} />
-              <Route path={ROUTES.login} element={<LoginPage />} />
-            </Route>
-          </Route>
-
-          <Route element={<SignupGate />}>
-            <Route element={<AuthShell />}>
-              <Route path={ROUTES.register} element={<RegisterPage />} />
-            </Route>
-          </Route>
-
-          <Route element={<RequirePlayer />}>
-            <Route element={<AppShell />}>
-              <Route path={ROUTES.home} element={<HomePage />} />
-              <Route path={`${ROUTES.games}/*`} element={<GamesPage />} />
-              <Route path={`${ROUTES.sport}/*`} element={<SportPage />} />
-              <Route path={ROUTES.bets} element={<BetsPage />} />
-              <Route path={ROUTES.wallet} element={<WalletPage />} />
-              <Route path={ROUTES.deposit} element={<DepositPage />} />
-              <Route path={ROUTES.withdraw} element={<WithdrawPage />} />
-              <Route path={ROUTES.history} element={<HistoryPage />} />
-              <Route path={ROUTES.profile} element={<ProfilePage />} />
-            </Route>
-          </Route>
-
-          <Route path="*" element={<Navigate to={ROUTES.home} replace />} />
-        </Routes>
-      </BrowserRouter>
-    </SessionProvider>
+    <PlayerSessionProvider>
+      <BrowserRouter><Gate /></BrowserRouter>
+    </PlayerSessionProvider>
   );
 }

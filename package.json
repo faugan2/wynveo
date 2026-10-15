@@ -10,7 +10,7 @@
   "scripts": {
     "dev:player": "npm run dev -w @wynveo/player",
     "dev:admin": "npm run dev -w @wynveo/admin",
-    "build": "npm run build -w @wynveo/player && npm run build -w @wynveo/admin",
+    "build": "npm run build -w @wynveo/core && npm run build -w @wynveo/player && npm run build -w @wynveo/admin",
     "test": "npm test -w @wynveo/core",
     "sync-core": "node functions/scripts/sync-core.mjs",
     "emulators": "npm run sync-core && firebase emulators:start --project demo-wynveo",

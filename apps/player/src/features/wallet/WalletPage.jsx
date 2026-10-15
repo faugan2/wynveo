@@ -1,38 +1,22 @@
-import { Link } from 'react-router-dom';
-import { maskPhone, PHONE_LABEL } from '@wynveo/core';
-import { Card, EmptyState, ListRow, Pill, SectionTitle, Skeleton } from '../../ui/index.js';
-import { useSession } from '../../hooks/SessionProvider.jsx';
-import { useTransactions } from '../../hooks/useTransactions.js';
-import { ROUTES } from '../../app/routes.js';
-import { BalanceHero } from './components/BalanceHero.jsx';
-import { BonusProgress } from './components/BonusProgress.jsx';
-import { VerifyNumberCard } from './components/VerifyNumberCard.jsx';
-import { TransactionRow } from './components/TransactionRow.jsx';
-
 export function WalletPage() {
-  const { wallet, profile } = useSession();
-  const { items, loading } = useTransactions({ limit: 5 });
   return (
     <>
-      <BalanceHero wallet={wallet} />
-      {!profile.phoneVerified && <VerifyNumberCard phone={profile.phone} compact />}
-      <BonusProgress wallet={wallet} />
-
-      <SectionTitle>Numéro de retrait</SectionTitle>
-      <Card flush>
-        <ListRow
-          title={maskPhone(profile.phone)}
-          subtitle="Vos retraits sont envoyés uniquement sur le numéro de votre compte."
-          right={<Pill tone={profile.phoneVerified ? 'good' : 'warn'}>{PHONE_LABEL[profile.phoneVerified]}</Pill>}
-        />
-      </Card>
-
-      <SectionTitle action={<Link to={ROUTES.history}>Tout l'historique</Link>}>Dernières opérations</SectionTitle>
-      <Card flush>
-        {loading && <div style={{ padding: '12px 0', display: 'grid', gap: 10 }}><Skeleton height={38} /><Skeleton height={38} /></div>}
-        {!loading && items.length === 0 && <EmptyState title="Aucune opération">Votre premier dépôt apparaîtra ici.</EmptyState>}
-        {items.map((tx) => <TransactionRow key={tx.id} tx={tx} />)}
-      </Card>
+      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>💰 Portefeuille</h1>
+      <div style={{ padding: 20, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
+        <h2 style={{ marginBottom: 15 }}>Gérer mon solde</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }}>
+          <button type="button" className="btn" style={{ padding: 15 }}>
+            + Dépôt
+          </button>
+          <button type="button" className="btn" style={{ padding: 15 }}>
+            - Retrait
+          </button>
+        </div>
+        <div style={{ marginTop: 20, padding: 15, backgroundColor: 'white', borderRadius: 4 }}>
+          <p className="small muted">Historique des transactions</p>
+          <p style={{ color: '#999' }}>Aucune transaction pour le moment</p>
+        </div>
+      </div>
     </>
   );
 }

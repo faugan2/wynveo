@@ -1,44 +1,28 @@
-import { Link } from 'react-router-dom';
-import { formatPhone, initials, KYC_LABEL, PHONE_LABEL } from '@wynveo/core';
-import { Avatar, Button, Card, Icon, ListRow, Pill } from '../../ui/index.js';
-import { useSession } from '../../hooks/SessionProvider.jsx';
-import { useCopy } from '../../hooks/useCopy.js';
-import { ROUTES } from '../../app/routes.js';
-
-const KYC_TONE = { none: 'warn', pending: 'info', verified: 'good', rejected: 'bad' };
+import { usePlayerSession } from '../../hooks/PlayerSession.jsx';
 
 export function ProfilePage() {
-  const { profile, signOut } = useSession();
-  const copy = useCopy();
-  const soon = <Pill>Bientôt</Pill>;
+  const { player, signOut } = usePlayerSession();
+
   return (
     <>
-      <Card style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-        <Avatar initials={initials(profile.fullName)} />
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>{profile.fullName}</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--fg-dim)', marginBottom: 4 }}>{formatPhone(profile.phone)}</div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <Pill tone={profile.phoneVerified ? 'good' : 'warn'}>{PHONE_LABEL[profile.phoneVerified]}</Pill>
-            <Pill tone={KYC_TONE[profile.kycStatus]}>{KYC_LABEL[profile.kycStatus]}</Pill>
-          </div>
+      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>👤 Profil</h1>
+      <div style={{ padding: 20, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
+        <div style={{ marginBottom: 15 }}>
+          <p className="small muted">Nom</p>
+          <p style={{ fontWeight: 600 }}>{player?.fullName}</p>
         </div>
-      </Card>
-
-      <Card flush>
-        <ListRow
-          as="button" type="button" onClick={() => copy.copy(profile.referralCode)}
-          icon={<Icon name="gift" size={18} />} title="Mon code parrain"
-          subtitle={copy.copied ? 'Copié !' : `${profile.referralCode} · touchez pour copier`}
-          right={<Icon name="copy" size={18} />}
-        />
-        <ListRow as={Link} to={ROUTES.history} icon={<Icon name="history" size={18} />} title="Historique des transactions" right={<Icon name="chevron" size={18} />} />
-        <ListRow icon={<Icon name="id" size={18} />} title="Vérification d'identité" subtitle="Nécessaire pour les gros retraits" right={soon} />
-        <ListRow icon={<Icon name="shield" size={18} />} title="Jeu responsable" subtitle="Limites et pauses" right={soon} />
-        <ListRow icon={<Icon name="bell" size={18} />} title="Notifications" right={soon} />
-      </Card>
-
-      <Button variant="danger" onClick={signOut}>Se déconnecter</Button>
+        <div style={{ marginBottom: 15 }}>
+          <p className="small muted">Email</p>
+          <p style={{ fontWeight: 600 }}>{player?.email}</p>
+        </div>
+        <div style={{ marginBottom: 15 }}>
+          <p className="small muted">Téléphone</p>
+          <p style={{ fontWeight: 600 }}>{player?.phone}</p>
+        </div>
+        <button type="button" className="btn bad" onClick={signOut}>
+          Se déconnecter
+        </button>
+      </div>
     </>
   );
 }
