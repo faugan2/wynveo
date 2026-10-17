@@ -1,59 +1,100 @@
-import { Link } from 'react-router-dom';
-import { usePlayerSession } from '../../hooks/PlayerSession.jsx';
-import { formatFCFA } from '@wynveo/core';
+import './DashboardPage.css';
 
 export function DashboardPage() {
-  const { player } = usePlayerSession();
-
-  const mockStats = {
+  // Mock data - en production: vient de Firestore/API
+  const player = {
+    fullName: 'Kossi Amouzou',
     balance: 125000,
     totalDeposited: 500000,
     totalWithdrawn: 375000,
-    totalStaked: 892000,
-    totalWon: 650000,
+    bonus: 2000,
+    withdrawable: 123000,
   };
 
   return (
-    <>
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>Bienvenue, {player?.fullName}!</h1>
+    <div className="dashboard-page">
+      {/* Hero Section */}
+      <section className="dashboard-hero">
+        <div className="hero-greeting">
+          <h1 className="hero-title">Bienvenue, {player.fullName}! 👋</h1>
+          <p className="hero-subtitle">Écrans 05 à 09 • le solde est partagé entre Jeux et Sport</p>
+        </div>
+      </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 24 }}>
-        <div style={{ padding: 20, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
-          <div className="small muted">Solde</div>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#27ae60' }}>{formatFCFA(mockStats.balance)}</div>
+      {/* Balance Stats */}
+      <section className="dashboard-stats">
+        <div className="stat-card stat-card-teal">
+          <div className="stat-label">Solde disponible</div>
+          <div className="stat-value">{player.balance.toLocaleString('fr-FR')} FCFA</div>
+          <div className="stat-bar">
+            <div className="stat-bar-fill" style={{ width: '65%' }}></div>
+          </div>
         </div>
-        <div style={{ padding: 20, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
-          <div className="small muted">Total dépôts</div>
-          <div style={{ fontSize: 18, fontWeight: 700 }}>{formatFCFA(mockStats.totalDeposited)}</div>
-        </div>
-        <div style={{ padding: 20, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
-          <div className="small muted">Gains</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: '#27ae60' }}>{formatFCFA(mockStats.totalWon)}</div>
-        </div>
-      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
-        <Link to="/portefeuille" style={{ textDecoration: 'none' }}>
-          <button type="button" className="btn" style={{ width: '100%', padding: 20 }}>
-            💰 Dépôt/Retrait
+        <div className="stat-card stat-card-purple">
+          <div className="stat-label">Retraitable</div>
+          <div className="stat-value">{player.withdrawable.toLocaleString('fr-FR')} FCFA</div>
+          <div className="stat-info">Min: 1 000</div>
+        </div>
+
+        <div className="stat-card stat-card-green">
+          <div className="stat-label">Bonus</div>
+          <div className="stat-value">{player.bonus.toLocaleString('fr-FR')} FCFA</div>
+          <div className="stat-info">À miser avant retrait</div>
+        </div>
+      </section>
+
+      {/* Quick Actions */}
+      <section className="dashboard-actions">
+        <h2 className="section-title">Que veux-tu faire?</h2>
+        
+        <div className="actions-grid">
+          <button className="action-card action-card-orange">
+            <span className="action-icon">💳</span>
+            <span className="action-label">Dépôt/Retrait</span>
           </button>
-        </Link>
-        <Link to="/sports" style={{ textDecoration: 'none' }}>
-          <button type="button" className="btn" style={{ width: '100%', padding: 20 }}>
-            ⚽ Paris sportifs
+
+          <button className="action-card action-card-teal">
+            <span className="action-icon">⚽</span>
+            <span className="action-label">Paris sportifs</span>
           </button>
-        </Link>
-        <Link to="/jeux" style={{ textDecoration: 'none' }}>
-          <button type="button" className="btn" style={{ width: '100%', padding: 20 }}>
-            🎮 Jeux
+
+          <button className="action-card action-card-purple">
+            <span className="action-icon">🎮</span>
+            <span className="action-label">Jeux</span>
           </button>
-        </Link>
-        <Link to="/profil" style={{ textDecoration: 'none' }}>
-          <button type="button" className="btn" style={{ width: '100%', padding: 20 }}>
-            👤 Profil
+
+          <button className="action-card action-card-blue">
+            <span className="action-icon">👤</span>
+            <span className="action-label">Profil</span>
           </button>
-        </Link>
-      </div>
-    </>
+        </div>
+      </section>
+
+      {/* Shortcuts */}
+      <section className="dashboard-shortcuts">
+        <div className="shortcut-card shortcut-jackpot">
+          <div className="shortcut-content">
+            <div className="shortcut-icon">🎰</div>
+            <div className="shortcut-info">
+              <h3>Jackpot du jour</h3>
+              <p>2 500 000 FCFA</p>
+            </div>
+          </div>
+          <span className="shortcut-time">Tirage: 20:00</span>
+        </div>
+
+        <div className="shortcut-card shortcut-live">
+          <div className="shortcut-content">
+            <div className="shortcut-icon">⚽</div>
+            <div className="shortcut-info">
+              <h3>12 matchs en direct</h3>
+              <p>Foot, basket, tennis</p>
+            </div>
+          </div>
+          <span className="shortcut-action">→</span>
+        </div>
+      </section>
+    </div>
   );
 }
