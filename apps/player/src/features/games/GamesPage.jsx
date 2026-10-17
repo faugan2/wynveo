@@ -1,169 +1,206 @@
 import { useState } from 'react';
-import { formatFCFA } from '@wynveo/core';
-import { useGames } from '../../hooks/useGames.js';
+import './GamesPage.css';
 
 export function GamesPage() {
-  const { loading, error, playLuckyNumbers, playJackpot, playBox } = useGames();
-  const [activeGame, setActiveGame] = useState(null);
-  const [result, setResult] = useState(null);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [betAmount, setBetAmount] = useState('1000');
 
-  // Lucky Numbers state
-  const [selectedNumbers, setSelectedNumbers] = useState([]);
-  const [luckyAmount, setLuckyAmount] = useState('');
-
-  // Jackpot state
-  const [jackpotAmount, setJackpotAmount] = useState('');
-
-  // Box state
-  const [boxSelection, setBoxSelection] = useState('');
-  const [boxAmount, setBoxAmount] = useState('');
-
-  const handlePlayLuckyNumbers = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await playLuckyNumbers(selectedNumbers, parseInt(luckyAmount));
-      setResult(res);
-      setSelectedNumbers([]);
-      setLuckyAmount('');
-    } catch (err) {
-      alert('Erreur: ' + err.message);
-    }
-  };
-
-  const handlePlayJackpot = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await playJackpot(parseInt(jackpotAmount));
-      setResult(res);
-      setJackpotAmount('');
-    } catch (err) {
-      alert('Erreur: ' + err.message);
-    }
-  };
-
-  const handlePlayBox = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await playBox(boxSelection, parseInt(boxAmount));
-      setResult(res);
-      setBoxSelection('');
-      setBoxAmount('');
-    } catch (err) {
-      alert('Erreur: ' + err.message);
-    }
-  };
-
-  if (error) return <p className="notice bad">{error}</p>;
+  const games = [
+    {
+      id: 'lucky-spin',
+      name: 'Lucky Spin',
+      description: 'Faites tourner la roue de la chance',
+      icon: '🎡',
+      color: 'orange',
+      minBet: 100,
+      maxBet: 50000,
+      multipliers: [1, 2, 5, 10, 20, 50],
+    },
+    {
+      id: 'mystery-box',
+      name: 'Mystery Box',
+      description: '9 coffres mystérieux à ouvrir',
+      icon: '🎁',
+      color: 'purple',
+      minBet: 500,
+      maxBet: 100000,
+      prizes: 9,
+    },
+    {
+      id: 'lucky-number',
+      name: 'Lucky Number',
+      description: 'Devinez le nombre de 1 à 50',
+      icon: '🎯',
+      color: 'green',
+      minBet: 200,
+      maxBet: 50000,
+      multiplier: 5,
+    },
+    {
+      id: 'jackpot',
+      name: 'Jackpot Daily',
+      description: 'Gagnez jusqu\'à 10 000 FCFA',
+      icon: '🏆',
+      color: 'blue',
+      minBet: 100,
+      maxBet: 100000,
+      winRate: '1 sur 100',
+    },
+  ];
 
   return (
-    <>
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>🎮 Jeux</h1>
+    <div className="games-page">
+      {/* Header */}
+      <div className="page-header">
+        <h1>Jeux Instantanés</h1>
+        <p className="page-subtitle">Jouez et gagnez instantanément</p>
+      </div>
 
-      {result && (
-        <div style={{ padding: 20, backgroundColor: result.won ? '#e8f5e9' : '#fff3e0', borderRadius: 8, marginBottom: 20 }}>
-          <h2 style={{ marginTop: 0, color: result.won ? '#27ae60' : '#f39c12' }}>
-            {result.won ? '🎉 Vous avez gagné!' : '😢 Perdu'}
-          </h2>
-          <p style={{ fontSize: '1.2rem', fontWeight: 700, color: result.won ? '#27ae60' : '#333' }}>
-            {formatFCFA(result.payout)}
-          </p>
-          <button type="button" className="btn sm" onClick={() => setResult(null)}>
-            Fermer
+      {!selectedGame ? (
+        <>
+          {/* Games Grid */}
+          <div className="games-grid">
+            {games.map((game) => (
+              <div
+                key={game.id}
+                className={`game-card ${game.color}`}
+                onClick={() => setSelectedGame(game)}
+              >
+                <div className="game-icon">{game.icon}</div>
+                <h3>{game.name}</h3>
+                <p>{game.description}</p>
+                <button className="game-btn">Jouer →</button>
+              </div>
+            ))}
+          </div>
+
+          {/* Info Section */}
+          <div className="info-section">
+            <h3>🎮 Comment ça marche?</h3>
+            <div className="steps">
+              <div className="step">
+                <span className="step-num">1</span>
+                <span>Choisissez un jeu</span>
+              </div>
+              <div className="step">
+                <span className="step-num">2</span>
+                <span>Définissez votre mise</span>
+              </div>
+              <div className="step">
+                <span className="step-num">3</span>
+                <span>Jouez et gagnez!</span>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="game-detail">
+          {/* Back Button */}
+          <button
+            className="btn-back-game"
+            onClick={() => setSelectedGame(null)}
+          >
+            ← Retour aux jeux
           </button>
+
+          {/* Game Info */}
+          <div className="game-detail-header">
+            <div className="game-detail-icon">{selectedGame.icon}</div>
+            <div>
+              <h2>{selectedGame.name}</h2>
+              <p>{selectedGame.description}</p>
+            </div>
+          </div>
+
+          {/* Bet Form */}
+          <div className="bet-form-container">
+            <div className="form-group">
+              <label>Montant de la mise (FCFA)</label>
+              <input
+                type="number"
+                value={betAmount}
+                onChange={(e) => setBetAmount(e.target.value)}
+                min={selectedGame.minBet}
+                max={selectedGame.maxBet}
+              />
+              <small>Min: {selectedGame.minBet} | Max: {selectedGame.maxBet}</small>
+            </div>
+
+            {/* Game Preview */}
+            <div className="game-preview">
+              {selectedGame.id === 'lucky-spin' && (
+                <div className="preview-content">
+                  <div className="wheel">🎡</div>
+                  <p>Cliquez sur "Jouer" pour faire tourner la roue</p>
+                  <div className="multipliers">
+                    {selectedGame.multipliers.map((m) => (
+                      <span key={m} className="multiplier">
+                        x{m}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedGame.id === 'mystery-box' && (
+                <div className="preview-content">
+                  <div className="boxes">
+                    {[...Array(9)].map((_, i) => (
+                      <div key={i} className="box">🎁</div>
+                    ))}
+                  </div>
+                  <p>Découvrez les 9 coffres mystérieux</p>
+                </div>
+              )}
+
+              {selectedGame.id === 'lucky-number' && (
+                <div className="preview-content">
+                  <div className="number-grid">
+                    {[...Array(50)].map((_, i) => (
+                      <button key={i + 1} className="number-btn">
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <p>Gagnez {selectedGame.multiplier}x votre mise</p>
+                </div>
+              )}
+
+              {selectedGame.id === 'jackpot' && (
+                <div className="preview-content">
+                  <div className="jackpot-display">
+                    <span className="jackpot-amount">2.5M FCFA</span>
+                    <span className="win-chance">1 chance sur 100</span>
+                  </div>
+                  <p>Tirage à 20h00 chaque jour</p>
+                </div>
+              )}
+            </div>
+
+            {/* Play Button */}
+            <button className="btn btn-primary btn-lg">
+              💰 Jouer avec {parseInt(betAmount).toLocaleString()} FCFA
+            </button>
+
+            {/* Info Box */}
+            <div className="info-box">
+              <h4>📋 Règles du jeu</h4>
+              {selectedGame.id === 'lucky-spin' && (
+                <p>Vous pouvez gagner jusqu'à 50x votre mise! Les multipliers sont aléatoires.</p>
+              )}
+              {selectedGame.id === 'mystery-box' && (
+                <p>Ouvrez des coffres pour trouver des gains. Certains coffres peuvent être vides.</p>
+              )}
+              {selectedGame.id === 'lucky-number' && (
+                <p>Devinez le nombre correct pour gagner 5x votre mise.</p>
+              )}
+              {selectedGame.id === 'jackpot' && (
+                <p>Le tirage se fait automatiquement chaque jour à 20h. Vous pouvez cumuler plusieurs billets.</p>
+              )}
+            </div>
+          </div>
         </div>
       )}
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 15 }}>
-        {/* Lucky Numbers */}
-        <form onSubmit={handlePlayLuckyNumbers} style={{ padding: 20, border: '1px solid #ddd', borderRadius: 8 }}>
-          <h3 style={{ marginTop: 0 }}>Lucky Numbers</h3>
-          <p className="small muted">Choisissez 3 numéros (1-50)</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 5, marginBottom: 15, maxHeight: 200, overflowY: 'auto' }}>
-            {Array.from({ length: 50 }).map((_, i) => {
-              const num = i + 1;
-              return (
-                <button
-                  key={num}
-                  type="button"
-                  onClick={() => setSelectedNumbers((prev) => prev.includes(num) ? prev.filter((n) => n !== num) : [...prev, num].slice(-3))}
-                  style={{
-                    padding: 10,
-                    backgroundColor: selectedNumbers.includes(num) ? 'var(--accent)' : '#f5f5f5',
-                    color: selectedNumbers.includes(num) ? 'white' : '#333',
-                    border: 'none',
-                    borderRadius: 4,
-                    fontWeight: selectedNumbers.includes(num) ? 700 : 400,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {num}
-                </button>
-              );
-            })}
-          </div>
-          <input
-            type="number"
-            placeholder="Montant"
-            value={luckyAmount}
-            onChange={(e) => setLuckyAmount(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4, marginBottom: 10 }}
-            required
-          />
-          <button type="submit" className="btn" style={{ width: '100%' }} disabled={loading}>
-            {loading ? 'Jeu…' : 'Jouer (x5)'}
-          </button>
-        </form>
-
-        {/* Jackpot */}
-        <form onSubmit={handlePlayJackpot} style={{ padding: 20, border: '1px solid #ddd', borderRadius: 8 }}>
-          <h3 style={{ marginTop: 0 }}>Jackpot</h3>
-          <p className="small muted">Gros gains possibles!</p>
-          <input
-            type="number"
-            placeholder="Montant"
-            value={jackpotAmount}
-            onChange={(e) => setJackpotAmount(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4, marginBottom: 10 }}
-            required
-          />
-          <div style={{ padding: 10, backgroundColor: '#f5f5f5', borderRadius: 4, marginBottom: 10, fontSize: '0.9rem' }}>
-            <div>95%+: x50</div>
-            <div>85-95%: x10</div>
-            <div>70-85%: x2</div>
-          </div>
-          <button type="submit" className="btn" style={{ width: '100%' }} disabled={loading}>
-            {loading ? 'Jeu…' : 'Jouer'}
-          </button>
-        </form>
-
-        {/* Box */}
-        <form onSubmit={handlePlayBox} style={{ padding: 20, border: '1px solid #ddd', borderRadius: 8 }}>
-          <h3 style={{ marginTop: 0 }}>Box</h3>
-          <p className="small muted">Devinez le numéro (0-9)</p>
-          <select
-            value={boxSelection}
-            onChange={(e) => setBoxSelection(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4, marginBottom: 10 }}
-            required
-          >
-            <option value="">Choisir un numéro…</option>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <option key={i} value={i}>{i}</option>
-            ))}
-          </select>
-          <input
-            type="number"
-            placeholder="Montant"
-            value={boxAmount}
-            onChange={(e) => setBoxAmount(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4, marginBottom: 10 }}
-            required
-          />
-          <button type="submit" className="btn" style={{ width: '100%' }} disabled={loading}>
-            {loading ? 'Jeu…' : 'Jouer (x9)'}
-          </button>
-        </form>
-      </div>
-    </>
+    </div>
   );
 }

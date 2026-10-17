@@ -1,125 +1,193 @@
 import { useState } from 'react';
-import { formatFCFA } from '@wynveo/core';
-import { useSports } from '../../hooks/useSports.js';
-
-const WHEN = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+import './SportsPage.css';
 
 export function SportsPage() {
-  const { events, loading, error, placeBet } = useSports();
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [selection, setSelection] = useState(null);
-  const [amount, setAmount] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('live');
+  const [selectedBets, setSelectedBets] = useState({});
 
-  const handlePlaceBet = async (e) => {
-    e.preventDefault();
-    if (!selection || !amount) return;
-    setSubmitting(true);
-    try {
-      await placeBet(selectedEvent.id, selection, parseInt(amount));
-      alert('Pari placé avec succès!');
-      setSelectedEvent(null);
-      setSelection(null);
-      setAmount('');
-    } catch (err) {
-      alert('Erreur: ' + err.message);
-    } finally {
-      setSubmitting(false);
-    }
+  // Mock data
+  const events = {
+    live: [
+      {
+        id: 1,
+        league: 'LIGUE 1',
+        home: 'PSG',
+        away: 'Lyon',
+        time: '45+2',
+        homeScore: 2,
+        awayScore: 1,
+        odds: { home: 1.5, draw: 3.2, away: 5.0 },
+        live: true,
+      },
+      {
+        id: 2,
+        league: 'SERIE A',
+        home: 'AC Milan',
+        away: 'Inter',
+        time: '20',
+        homeScore: 0,
+        awayScore: 0,
+        odds: { home: 2.1, draw: 3.5, away: 3.0 },
+        live: true,
+      },
+    ],
+    upcoming: [
+      {
+        id: 3,
+        league: 'LIGUE 1',
+        home: 'Marseille',
+        away: 'Toulouse',
+        date: '2024-10-20 20:00',
+        odds: { home: 1.8, draw: 3.3, away: 4.2 },
+      },
+      {
+        id: 4,
+        league: 'PREMIER LEAGUE',
+        home: 'Manchester City',
+        away: 'Arsenal',
+        date: '2024-10-20 19:00',
+        odds: { home: 2.0, draw: 3.4, away: 3.5 },
+      },
+      {
+        id: 5,
+        league: 'BUNDESLIGA',
+        home: 'Bayern Munich',
+        away: 'Borussia Dortmund',
+        date: '2024-10-21 18:30',
+        odds: { home: 1.6, draw: 3.8, away: 5.5 },
+      },
+    ],
   };
 
-  if (loading) return <p>Chargement des matchs…</p>;
+  const handleBetSelect = (eventId, selection) => {
+    setSelectedBets({
+      ...selectedBets,
+      [eventId]: selection,
+    });
+  };
+
+  const activeBets = Object.keys(selectedBets).length;
 
   return (
-    <>
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 20 }}>⚽ Paris sportifs</h1>
+    <div className="sports-page">
+      {/* Header */}
+      <div className="page-header">
+        <h1>Paris Sportifs</h1>
+        <p className="page-subtitle">Pariez sur les meilleurs événements</p>
+      </div>
 
-      {error && <div className="notice bad" style={{ marginBottom: 20 }}>{error}</div>}
+      {/* Coupon Badge */}
+      {activeBets > 0 && (
+        <div className="coupon-badge">
+          <span>🧾 Coupon: {activeBets} sélection{activeBets > 1 ? 's' : ''}</span>
+          <button className="coupon-btn">Voir le coupon →</button>
+        </div>
+      )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: selectedEvent ? '1fr 350px' : '1fr', gap: 20 }}>
-        <div>
-          {events && events.map((event) => (
-            <div
-              key={event.id}
-              onClick={() => setSelectedEvent(event)}
-              style={{
-                padding: 15,
-                marginBottom: 15,
-                border: selectedEvent?.id === event.id ? '2px solid var(--accent)' : '1px solid #ddd',
-                borderRadius: 8,
-                cursor: 'pointer',
-                backgroundColor: selectedEvent?.id === event.id ? '#f0f7ff' : 'white',
-              }}
-            >
-              <div className="small muted">{event.league}</div>
-              <div style={{ fontSize: 18, fontWeight: 700, margin: '10px 0' }}>
-                {event.home} vs {event.away}
+      {/* Tabs */}
+      <div className="sports-tabs">
+        <button
+          className={`tab-btn ${selectedTab === 'live' ? 'active' : ''}`}
+          onClick={() => setSelectedTab('live')}
+        >
+          🔴 En direct ({events.live.length})
+        </button>
+        <button
+          className={`tab-btn ${selectedTab === 'upcoming' ? 'active' : ''}`}
+          onClick={() => setSelectedTab('upcoming')}
+        >
+          ⏰ À venir ({events.upcoming.length})
+        </button>
+      </div>
+
+      {/* Events List */}
+      <div className="events-list">
+        {(selectedTab === 'live' ? events.live : events.upcoming).map((event) => (
+          <div key={event.id} className={`event-card ${event.live ? 'live' : ''}`}>
+            {event.live && <div className="live-badge">🔴 EN DIRECT</div>}
+
+            {/* Event Header */}
+            <div className="event-header">
+              <span className="league-badge">{event.league}</span>
+              {event.live ? (
+                <span className="time-badge">{event.time}'</span>
+              ) : (
+                <span className="date-badge">{new Date(event.date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+              )}
+            </div>
+
+            {/* Match */}
+            <div className="match-section">
+              <div className="team">
+                <span className="team-name">{event.home}</span>
+                {event.live && <span className="score">{event.homeScore}</span>}
               </div>
-              <div className="small muted">{WHEN.format(event.startAt)}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10, fontSize: '0.9rem' }}>
-                <div style={{ textAlign: 'center', padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
-                  <div className="small muted">{event.home}</div>
-                  <div style={{ fontWeight: 700 }}>{event.markets.h2h.home}</div>
-                </div>
-                {event.markets.h2h.draw && (
-                  <div style={{ textAlign: 'center', padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
-                    <div className="small muted">Nul</div>
-                    <div style={{ fontWeight: 700 }}>{event.markets.h2h.draw}</div>
-                  </div>
+
+              <div className="center">
+                {event.live ? (
+                  <span className="vs">VS</span>
+                ) : (
+                  <span className="clock">🕐</span>
                 )}
-                <div style={{ textAlign: 'center', padding: 8, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
-                  <div className="small muted">{event.away}</div>
-                  <div style={{ fontWeight: 700 }}>{event.markets.h2h.away}</div>
-                </div>
+              </div>
+
+              <div className="team">
+                {event.live && <span className="score">{event.awayScore}</span>}
+                <span className="team-name">{event.away}</span>
               </div>
             </div>
-          ))}
-        </div>
 
-        {selectedEvent && (
-          <form onSubmit={handlePlaceBet} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-            <div style={{ padding: 15, backgroundColor: '#f5f5f5', borderRadius: 8 }}>
-              <h3 style={{ marginTop: 0 }}>Passer un pari</h3>
-              <div style={{ marginBottom: 15 }}>
-                <label style={{ fontWeight: 600, display: 'block', marginBottom: 5 }}>Sélection</label>
-                <select
-                  value={selection || ''}
-                  onChange={(e) => setSelection(e.target.value)}
-                  style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4 }}
-                  required
-                >
-                  <option value="">Choisir…</option>
-                  <option value="home">{selectedEvent.home} ({selectedEvent.markets.h2h.home})</option>
-                  {selectedEvent.markets.h2h.draw && <option value="draw">Nul ({selectedEvent.markets.h2h.draw})</option>}
-                  <option value="away">{selectedEvent.away} ({selectedEvent.markets.h2h.away})</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: 15 }}>
-                <label style={{ fontWeight: 600, display: 'block', marginBottom: 5 }}>Montant</label>
-                <input
-                  type="number"
-                  placeholder="5000"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4 }}
-                  required
-                />
-              </div>
-              {selection && amount && (
-                <div style={{ padding: 10, backgroundColor: 'white', borderRadius: 4, marginBottom: 15 }}>
-                  <div className="small muted">Gain potentiel</div>
-                  <div style={{ fontWeight: 700, fontSize: '1.2rem', color: '#27ae60' }}>
-                    {formatFCFA(parseInt(amount) * (selectedEvent.markets.h2h[selection] || 1))}
-                  </div>
-                </div>
-              )}
-              <button type="submit" className="btn" style={{ width: '100%' }} disabled={submitting}>
-                {submitting ? 'Placement…' : 'Parier'}
+            {/* Odds */}
+            <div className="odds-section">
+              <button
+                className={`odd-btn ${selectedBets[event.id] === 'home' ? 'selected' : ''}`}
+                onClick={() => handleBetSelect(event.id, 'home')}
+              >
+                <span className="odd-text">{event.home}</span>
+                <span className="odd-value">{event.odds.home}</span>
+              </button>
+
+              <button
+                className={`odd-btn ${selectedBets[event.id] === 'draw' ? 'selected' : ''}`}
+                onClick={() => handleBetSelect(event.id, 'draw')}
+              >
+                <span className="odd-text">Match Nul</span>
+                <span className="odd-value">{event.odds.draw}</span>
+              </button>
+
+              <button
+                className={`odd-btn ${selectedBets[event.id] === 'away' ? 'selected' : ''}`}
+                onClick={() => handleBetSelect(event.id, 'away')}
+              >
+                <span className="odd-text">{event.away}</span>
+                <span className="odd-value">{event.odds.away}</span>
               </button>
             </div>
-          </form>
-        )}
+          </div>
+        ))}
       </div>
-    </>
+
+      {/* Coupon Modal - Simplified */}
+      {activeBets > 0 && (
+        <div className="coupon-summary">
+          <h3>Résumé du coupon</h3>
+          <div className="coupon-selections">
+            {Object.entries(selectedBets).map(([eventId, selection]) => {
+              const event = [...events.live, ...events.upcoming].find((e) => e.id === parseInt(eventId));
+              if (!event) return null;
+              return (
+                <div key={eventId} className="coupon-item">
+                  <span>{event.home} vs {event.away}</span>
+                  <span className="selection-badge">{selection}</span>
+                </div>
+              );
+            })}
+          </div>
+          <button className="btn btn-primary" style={{ width: '100%' }}>
+            Confirmer le coupon (3 sélections)
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
