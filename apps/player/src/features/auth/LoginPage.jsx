@@ -1,135 +1,123 @@
 import { useState } from 'react';
-import { usePlayerSession } from '../../hooks/PlayerSession.jsx';
+import { useNavigate } from 'react-router-dom';
+import './AuthPage.css';
 
 export function LoginPage() {
-  const [tab, setTab] = useState('login'); // 'login' ou 'register'
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = usePlayerSession();
+  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
-    try {
-      await signIn(email, password);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setError('');
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
     try {
-      await signUp(email, password, fullName, phone);
+      // TODO: Intégrer Firebase auth
+      console.log('Login:', { email, password });
+      
+      // Simulation: redirect to SMS verification
+      setTimeout(() => {
+        navigate('/verification-sms');
+      }, 500);
     } catch (err) {
-      setError(err.message);
-    } finally {
+      setError(err.message || 'Erreur de connexion');
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: '0 auto', padding: 20 }}>
-      <div style={{ textAlign: 'center', marginBottom: 30 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 10 }}>Wynveo</h1>
-        <p className="muted">Paris sportifs & Jeux de chance</p>
-      </div>
-
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, borderBottom: '1px solid #eee' }}>
-        <button
-          type="button"
-          className={`btn sm ${tab === 'login' ? 'active' : ''}`}
-          onClick={() => setTab('login')}
-          style={{ flex: 1, borderBottomWidth: tab === 'login' ? 2 : 0, borderBottomColor: 'var(--accent)' }}
-        >
-          Connexion
-        </button>
-        <button
-          type="button"
-          className={`btn sm ${tab === 'register' ? 'active' : ''}`}
-          onClick={() => setTab('register')}
-          style={{ flex: 1, borderBottomWidth: tab === 'register' ? 2 : 0, borderBottomColor: 'var(--accent)' }}
-        >
-          Inscription
-        </button>
-      </div>
-
-      {error && <div className="notice bad" style={{ marginBottom: 20 }}>{error}</div>}
-
-      <form onSubmit={tab === 'login' ? handleLogin : handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-        {tab === 'register' && (
-          <>
-            <div>
-              <label style={{ display: 'block', fontWeight: 600, marginBottom: 5 }}>Nom complet</label>
-              <input
-                type="text"
-                placeholder="Jean Dupont"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4 }}
-                required
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontWeight: 600, marginBottom: 5 }}>Téléphone</label>
-              <input
-                type="tel"
-                placeholder="+228 XX XX XX XX"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4 }}
-                required
-              />
-            </div>
-          </>
-        )}
-
-        <div>
-          <label style={{ display: 'block', fontWeight: 600, marginBottom: 5 }}>E-mail</label>
-          <input
-            type="email"
-            placeholder="vous@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4 }}
-            required
-          />
+    <div className="auth-page">
+      <div className="auth-container">
+        {/* Header */}
+        <div className="auth-header">
+          <button
+            className="btn-back"
+            onClick={() => navigate('/')}
+            title="Retour"
+          >
+            ←
+          </button>
+          <h1>Connexion</h1>
+          <div style={{ width: '44px' }} />
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontWeight: 600, marginBottom: 5 }}>Mot de passe</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: '100%', padding: 10, border: '1px solid #ddd', borderRadius: 4 }}
-            required
-          />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="auth-form">
+          {error && <div className="error-message">{error}</div>}
+
+          {/* Email Input */}
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="votre@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="form-group">
+            <label htmlFor="password">Mot de passe</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {/* Remember & Forgot */}
+          <div className="auth-links">
+            <label className="checkbox">
+              <input type="checkbox" />
+              <span>Se souvenir de moi</span>
+            </label>
+            <button type="button" className="link-btn">
+              Mot de passe oublié?
+            </button>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg"
+            disabled={loading}
+          >
+            {loading ? 'Connexion...' : 'Se Connecter'}
+          </button>
+        </form>
+
+        {/* Footer Link */}
+        <div className="auth-footer">
+          <p>
+            Pas encore de compte?{' '}
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => navigate('/inscription')}
+            >
+              S'inscrire
+            </button>
+          </p>
         </div>
 
-        <button
-          type="submit"
-          className="btn"
-          style={{ width: '100%' }}
-          disabled={loading}
-        >
-          {loading ? 'Chargement…' : tab === 'login' ? 'Se connecter' : "S'inscrire"}
-        </button>
-      </form>
+        {/* Divider & Social (optionnel) */}
+        <div className="auth-divider">
+          <span>ou</span>
+        </div>
 
-      <p style={{ textAlign: 'center', marginTop: 20, fontSize: '0.9rem', color: '#666' }}>
-        18+ • Jouer comporte des risques • Jeu responsable
-      </p>
+        <button className="btn-social">
+          <span>📱</span> Connexion avec Téléphone
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,24 +1,81 @@
-import { Link } from 'react-router-dom';
-import { Brand, Button } from '../../ui/index.js';
-import { ROUTES } from '../../app/routes.js';
-import s from './auth.module.css';
+import { useNavigate } from 'react-router-dom';
+import './WelcomePage.css';
 
 export function WelcomePage() {
+  const navigate = useNavigate();
+
   return (
-    <div className={s.welcome}>
-      <div className={s.center}><Brand size={34} /></div>
-      <div className={s.previews} aria-hidden>
-        <div className={`${s.preview} ${s.games}`}><span className={s.art}>🎰</span><b>Jeux</b><small>Spin, Box, Jackpot…</small></div>
-        <div className={`${s.preview} ${s.sport}`}><span className={s.art}>⚽</span><b>Sport</b><small>Foot, basket, live</small></div>
-      </div>
-      <div className={s.center}>
-        <h1 className={s.headline}>Jeux et paris sportifs, un seul compte</h1>
-        <p className={s.lead}>Créez votre compte avec votre numéro, déposez avec T-Money ou Flooz, jouez partout, retirez vos gains en quelques minutes.</p>
-      </div>
-      <div className={s.actions}>
-        <Button as={Link} to={ROUTES.register} block>Créer un compte</Button>
-        <Button as={Link} to={ROUTES.login} variant="ghost" block>Se connecter</Button>
-        <p className={s.legal}>18+ · Jouez de manière responsable</p>
+    <div className="welcome-page">
+      <div className="welcome-container">
+        <div className="welcome-content">
+          {/* Logo & Title */}
+          <div className="welcome-header">
+            <div className="welcome-logo">
+              <span className="logo-gradient">W</span>
+            </div>
+            <h1 className="welcome-title">Wynveo</h1>
+            <p className="welcome-subtitle">Sports & Gaming Platform</p>
+          </div>
+
+          {/* Features */}
+          <div className="welcome-features">
+            <div className="feature-item">
+              <div className="feature-icon">⚽</div>
+              <div>
+                <h3>Paris Sportifs</h3>
+                <p>Pariez sur les meilleurs événements</p>
+              </div>
+            </div>
+
+            <div className="feature-item">
+              <div className="feature-icon">🎰</div>
+              <div>
+                <h3>Jeux Instantanés</h3>
+                <p>Lucky Spin, Mystery Box & plus</p>
+              </div>
+            </div>
+
+            <div className="feature-item">
+              <div className="feature-icon">🏆</div>
+              <div>
+                <h3>Jackpot Quotidien</h3>
+                <p>Gagnez jusqu'à 2.5M FCFA</p>
+              </div>
+            </div>
+
+            <div className="feature-item">
+              <div className="feature-icon">💳</div>
+              <div>
+                <h3>Paiements Faciles</h3>
+                <p>Dépôts et retraits instantanés</p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="welcome-actions">
+            <button
+              className="btn btn-primary btn-lg"
+              onClick={() => navigate('/connexion')}
+            >
+              Se Connecter
+            </button>
+            <button
+              className="btn btn-secondary btn-lg"
+              onClick={() => navigate('/inscription')}
+            >
+              Créer un Compte
+            </button>
+          </div>
+
+          {/* Footer Text */}
+          <p className="welcome-footer">
+            Bienvenue sur la meilleure plateforme de jeu africaine
+          </p>
+        </div>
+
+        {/* Background Elements */}
+        <div className="welcome-bg-gradient"></div>
       </div>
     </div>
   );

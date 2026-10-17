@@ -1,56 +1,204 @@
-import { Link } from 'react-router-dom';
-import { PASSWORD_MIN_LENGTH } from '@wynveo/core';
-import { Button, Checkbox, Notice, PasswordField, TextField } from '../../ui/index.js';
-import { PageHeader } from '../../layout/PageHeader.jsx';
-import { useRegister } from '../../hooks/useRegister.js';
-import { useSession } from '../../hooks/SessionProvider.jsx';
-import { ROUTES } from '../../app/routes.js';
-import s from './auth.module.css';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './AuthPage.css';
 
 export function RegisterPage() {
-  const form = useRegister();
-  const { signOut } = useSession();
-  return (
-    <>
-      <PageHeader title="Inscription" backTo={form.hasAccount ? null : ROUTES.welcome} />
-      <form className={s.form} onSubmit={(e) => { e.preventDefault(); form.submit(); }} noValidate>
-        {form.hasAccount ? (
-          <p className={s.intro}>Compte créé pour le <b style={{ color: '#fff' }}>{form.accountPhone}</b>. Il ne reste que quelques informations.</p>
-        ) : (
-          <p className={s.intro}>Un seul compte pour les Jeux et le Sport.</p>
-        )}
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    agreeTerms: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-        <TextField
-          label="Nom complet" autoComplete="name" placeholder="Ex : Kossi Amouzou"
-          value={form.fullName} onChange={(e) => form.setFullName(e.target.value)} error={form.errors.fullName} autoFocus
-        />
-        {!form.hasAccount && (
-          <>
-            <TextField
-              label="Numéro de téléphone" prefix="🇹🇬 +228" inputMode="tel" autoComplete="username" placeholder="90 12 34 56"
-              value={form.phone} onChange={(e) => form.setPhone(e.target.value)} error={form.errors.phone}
-              hint="Utilisez votre numéro T-Money ou Flooz : vos retraits y seront envoyés."
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    // Validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    if (!formData.agreeTerms) {
+      setError('Vous devez accepter les conditions');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // TODO: Intégrer Firebase auth
+      console.log('Register:', formData);
+      
+      // Simulation: redirect to SMS verification
+      setTimeout(() => {
+        navigate('/verification-sms');
+      }, 500);
+    } catch (err) {
+      setError(err.message || 'Erreur d\'inscription');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="auth-page">
+      <div className="auth-container">
+        {/* Header */}
+        <div className="auth-header">
+          <button
+            className="btn-back"
+            onClick={() => navigate('/')}
+            title="Retour"
+          >
+            ←
+          </button>
+          <h1>Inscription</h1>
+          <div style={{ width: '44px' }} />
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="auth-form">
+          {error && <div className="error-message">{error}</div>}
+
+          {/* Name Fields */}
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="firstName">Prénom</label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="Jean"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="lastName">Nom</label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Dupont"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Email Input */}
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="votre@email.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
             />
-            <PasswordField
-              label="Mot de passe" autoComplete="new-password"
-              value={form.password} onChange={(e) => form.setPassword(e.target.value)} error={form.errors.password}
-              hint={`Au moins ${PASSWORD_MIN_LENGTH} caractères, avec des lettres et des chiffres.`}
+          </div>
+
+          {/* Phone Input */}
+          <div className="form-group">
+            <label htmlFor="phone">Téléphone</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="+228 XX XX XX XX"
+              value={formData.phone}
+              onChange={handleChange}
+              required
             />
-          </>
-        )}
-        <TextField
-          label="Code parrain" optional placeholder="Ex : KOSSI228" autoCapitalize="characters"
-          value={form.referralCode} onChange={(e) => form.setReferralCode(e.target.value)} error={form.errors.referralCode}
-        />
-        <Checkbox checked={form.ageConfirmed} onChange={form.setAgeConfirmed} error={form.errors.age}>
-          J'ai 18 ans ou plus et j'accepte les conditions d'utilisation.
-        </Checkbox>
-        {form.error && <Notice tone="error">{form.error}</Notice>}
-        <Button type="submit" block loading={form.pending}>Créer mon compte</Button>
-        {form.hasAccount
-          ? <Button variant="link" onClick={signOut}>Utiliser un autre numéro</Button>
-          : <p className={s.footer}>Déjà un compte ? <Link to={ROUTES.login}><b>Se connecter</b></Link></p>}
-      </form>
-    </>
+          </div>
+
+          {/* Password Inputs */}
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="password">Mot de passe</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirmer</label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Terms Checkbox */}
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              name="agreeTerms"
+              checked={formData.agreeTerms}
+              onChange={handleChange}
+            />
+            <span>
+              J'accepte les{' '}
+              <button type="button" className="link-btn">
+                conditions d'utilisation
+              </button>
+            </span>
+          </label>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg"
+            disabled={loading}
+          >
+            {loading ? 'Inscription...' : 'Créer un Compte'}
+          </button>
+        </form>
+
+        {/* Footer Link */}
+        <div className="auth-footer">
+          <p>
+            Vous avez déjà un compte?{' '}
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => navigate('/connexion')}
+            >
+              Se connecter
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
